@@ -1,0 +1,328 @@
+import { useMemo, useState } from 'react';
+import api from '../api/axios.js';
+import { groupIntoBatches } from '../utils/batchHelpers';
+import { getRoleLabel } from '../utils/roleLabels';
+
+const ROLE_STYLES = {
+  VOLUNTEER: 'bg-gray-100 text-gray-600 border-gray-200',
+  RO: 'bg-blue-50 text-blue-700 border-blue-200',
+  SO: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  ADMIN: 'bg-purple-50 text-purple-700 border-purple-200'
+};
+
+const getInitials = (name) =>
+  name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+
+export default function AdminNetworkExplorer({ everyone, adminUser, onUpdated }) {
+  // pathStack holds the drill-down trail. Empty = viewing Admin's own direct recruits.
+  const [pathStack, setPathStack] = useState([]);
+  const [search, setSearch] = useState('');
+  const [updatingId, setUpdatingId] = useState(null);
+
+  // A lookup map including a synthetic Admin entry, so ancestor-chain building
+  // (used by search) always has a root to terminate at.
+  const userMap = useMemo(() => {
+    const map = { [adminUser._id]: { ...adminUser, role: 'ADMIN' } };
+    everyone.forEach((u) => { map[u._id] = u; });
+    return map;
+  }, [everyone, adminUser]);
+
+  const childrenByParent = useMemo(() => {
+    const map = {};
+    everyone.forEach((u) => {
+      if (u.referredBy) {
+        if (!map[u.referredBy]) map[u.referredBy] = [];
+        map[u.referredBy].push(u);
+      }
+    });
+    return map;
+  }, [everyone]);
+
+  const currentParent = pathStack.length > 0 ? pathStack[pathStack.length - 1] : adminUser;
+  const isRoot = pathStack.length === 0;
+  const children = childrenByParent[currentParent._id] || [];
+
+  // Admin's OWN direct recruits are shown flat, individually — they're not
+  // subject to the batch-of-12/promotion logic. Everyone else's recruits
+  // (at any deeper level) ARE grouped into batches, since that's what
+  // actually drives their own RO -> SO promotion.
+  const batches = isRoot ? null : groupIntoBatches(children);
+
+  const drillInto = (user) => {
+    setPathStack((prev) => [...prev, user]);
+    setSearch('');
+  };
+
+  const jumpToBreadcrumb = (index) => {
+    // index -1 means "go back to root (Admin's own list)"
+    if (index === -1) {
+      setPathStack([]);
+    } else {
+      setPathStack((prev) => prev.slice(0, index + 1));
+    }
+  };
+
+  const confirmPurchase = async (userId, e) => {
+    e.stopPropagation(); // don't trigger the card's drill-down click
+    setUpdatingId(userId);
+    try {
+      await api.patch(`/admin/users/${userId}/confirm-purchase`);
+      onUpdated();
+    } catch (err) {
+      alert('Failed to update purchase status.');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  // Search across the WHOLE network, then jump directly to that person's
+  // location by rebuilding their ancestor chain up to (but not including) Admin.
+  const searchResults = useMemo(() => {
+    if (!search.trim()) return [];
+    const q = search.toLowerCase();
+    return everyone
+      .filter(
+        (u) =>
+          u.name.toLowerCase().includes(q) ||
+          u.email.toLowerCase().includes(q) ||
+          u.referralCode.toLowerCase().includes(q)
+      )
+      .slice(0, 8);
+  }, [search, everyone]);
+
+  const jumpToUser = (targetUser) => {
+    const chain = [];
+    let current = targetUser;
+    while (current && current.referredBy && userMap[current.referredBy]) {
+      const parent = userMap[current.referredBy];
+      if (parent.role === 'ADMIN') break; // stop before the synthetic admin entry
+      chain.unshift(parent);
+      current = parent;
+    }
+    chain.push(targetUser);
+    setPathStack(chain);
+    setSearch('');
+  };
+
+  const totalCount = everyone.length;
+  const roCount = everyone.filter((u) => u.role === 'RO').length;
+  const soCount = everyone.filter((u) => u.role === 'SO').length;
+  const pendingCount = everyone.filter((u) => !u.hasPurchasedBooks).length;
+
+  return (
+    <div>
+      {/* ---- Stat overview ---- */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+        <StatCard label="Total Members" value={totalCount} color="text-gray-900" />
+        <StatCard label="Regional Organizers" value={roCount} color="text-blue-600" />
+        <StatCard label="State Organizers" value={soCount} color="text-emerald-600" />
+        <StatCard label="Pending Purchase" value={pendingCount} color="text-amber-600" />
+      </div>
+
+      {/* ---- Search (jumps to a member's location in the tree) ---- */}
+      <div className="relative mb-5">
+        <input
+          type="text"
+          placeholder="Search a member to jump to their spot in the network..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full sm:w-96 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+        />
+        {searchResults.length > 0 && (
+          <div className="absolute z-10 mt-1 w-full sm:w-96 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+            {searchResults.map((u) => (
+              <button
+                key={u._id}
+                onClick={() => jumpToUser(u)}
+                className="w-full text-left px-4 py-2.5 hover:bg-gray-50 flex items-center gap-3 border-b border-gray-50 last:border-b-0"
+              >
+                <div className="w-7 h-7 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                  {getInitials(u.name)}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">{u.name}</p>
+                  <p className="text-xs text-gray-400 truncate">{u.email}</p>
+                </div>
+                <span className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full border flex-shrink-0 ${ROLE_STYLES[u.role]}`}>
+                  {getRoleLabel(u.role)}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ---- Breadcrumb trail ---- */}
+      <div className="flex items-center flex-wrap gap-1 mb-5 text-sm">
+        <button
+          onClick={() => jumpToBreadcrumb(-1)}
+          className={`font-semibold ${isRoot ? 'text-gray-900' : 'text-orange-600 hover:text-orange-800'}`}
+        >
+          Admin
+        </button>
+        {pathStack.map((user, i) => (
+          <span key={user._id} className="flex items-center gap-1">
+            <span className="text-gray-300">/</span>
+            <button
+              onClick={() => jumpToBreadcrumb(i)}
+              className={`font-semibold truncate max-w-[140px] ${
+                i === pathStack.length - 1 ? 'text-gray-900' : 'text-orange-600 hover:text-orange-800'
+              }`}
+            >
+              {user.name}
+            </button>
+          </span>
+        ))}
+      </div>
+
+      {/* ---- Current parent's profile card (only when drilled in) ---- */}
+      {!isRoot && (
+        <div className="bg-white border border-gray-200 rounded-xl p-4 mb-5 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-orange-500 text-white font-bold flex items-center justify-center flex-shrink-0">
+            {getInitials(currentParent.name)}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-bold text-gray-900">{currentParent.name}</p>
+            <p className="text-xs text-gray-400">{currentParent.email} • {currentParent.contactNumber}</p>
+          </div>
+          <span className={`text-xs font-bold px-2.5 py-1 rounded-full border flex-shrink-0 ${ROLE_STYLES[currentParent.role]}`}>
+            {getRoleLabel(currentParent.role)}
+          </span>
+          {currentParent.hasPurchasedBooks ? (
+            <span className="text-emerald-600 text-xs font-semibold flex-shrink-0">✓ Purchased</span>
+          ) : (
+            <span className="text-amber-600 text-xs font-semibold flex-shrink-0">Pending</span>
+          )}
+        </div>
+      )}
+
+      {/* ---- Section heading ---- */}
+      <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">
+        {isRoot
+          ? `Admin's Direct Recruits (${children.length})`
+          : `${currentParent.name}'s Recruits (${children.length})${
+              batches ? ` — ${batches.length} group${batches.length === 1 ? '' : 's'}` : ''
+            }`}
+      </h2>
+
+      {/* ---- Empty state ---- */}
+      {children.length === 0 && (
+        <div className="border border-dashed border-gray-300 rounded-xl p-8 text-sm text-gray-400 italic text-center">
+          No recruits yet.
+        </div>
+      )}
+
+      {/* ---- ROOT: flat card grid, no batching ---- */}
+      {isRoot && children.length > 0 && (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {children.map((member) => (
+            <MemberCard
+              key={member._id}
+              member={member}
+              recruitCount={(childrenByParent[member._id] || []).length}
+              onClick={() => drillInto(member)}
+              onConfirmPurchase={(e) => confirmPurchase(member._id, e)}
+              updating={updatingId === member._id}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* ---- NON-ROOT: grouped into batches of 12 ---- */}
+      {!isRoot && batches && batches.length > 0 && (
+        <div className="space-y-6">
+          {batches.map((batch) => (
+            <div key={batch.batchNumber}>
+              <div className="flex items-center gap-2 mb-3">
+                <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                  batch.isComplete ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-50 text-blue-700'
+                }`}>
+                  Group {batch.batchNumber}
+                </span>
+                <span className="text-xs text-gray-400 font-medium">
+                  {batch.completedCount}/12 completed{batch.isComplete ? ' — Completed ✓' : ''}
+                </span>
+                <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden max-w-[140px]">
+                  <div
+                    className={`h-full rounded-full transition-all ${batch.isComplete ? 'bg-emerald-400' : 'bg-blue-400'}`}
+                    style={{ width: `${(batch.completedCount / 12) * 100}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {batch.members.map((member) => (
+                  <MemberCard
+                    key={member._id}
+                    member={member}
+                    recruitCount={(childrenByParent[member._id] || []).length}
+                    onClick={() => drillInto(member)}
+                    onConfirmPurchase={(e) => confirmPurchase(member._id, e)}
+                    updating={updatingId === member._id}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MemberCard({ member, recruitCount, onClick, onConfirmPurchase, updating }) {
+  return (
+    <button
+      onClick={onClick}
+      className="bg-white border border-gray-200 rounded-xl p-4 text-left hover:border-orange-300 hover:shadow-sm transition-all"
+    >
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-700 text-xs font-bold flex items-center justify-center flex-shrink-0">
+            {getInitials(member.name)}
+          </div>
+          <div className="min-w-0">
+            <p className="font-semibold text-gray-900 text-sm truncate">{member.name}</p>
+            <p className="text-xs text-gray-400 truncate">{member.email}</p>
+          </div>
+        </div>
+        <svg className="w-4 h-4 text-gray-300 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </div>
+
+      <div className="flex items-center flex-wrap gap-1.5 mb-3">
+        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${ROLE_STYLES[member.role]}`}>
+          {getRoleLabel(member.role)}
+        </span>
+        {member.hasPurchasedBooks ? (
+          <span className="text-emerald-600 text-[10px] font-semibold">✓ Purchased</span>
+        ) : (
+          <span className="text-amber-600 text-[10px] font-semibold">Pending</span>
+        )}
+        <span className="text-[10px] text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">
+          {recruitCount} recruit{recruitCount === 1 ? '' : 's'}
+        </span>
+      </div>
+
+      {!member.hasPurchasedBooks && (
+        <span
+          role="button"
+          onClick={onConfirmPurchase}
+          className="inline-block text-xs font-semibold bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 disabled:opacity-60 w-full text-center"
+        >
+          {updating ? 'Updating...' : 'Confirm Purchase'}
+        </span>
+      )}
+    </button>
+  );
+}
+
+function StatCard({ label, value, color }) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl p-4">
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">{label}</p>
+      <p className={`text-2xl font-bold ${color}`}>{value}</p>
+    </div>
+  );
+}
