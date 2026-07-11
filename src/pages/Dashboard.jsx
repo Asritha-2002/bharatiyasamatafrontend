@@ -130,7 +130,9 @@ export default function Dashboard() {
     setLoading(true);
     try {
       const res = await api.get('/dashboard/me');
+      console.log(res.data)
       setData(res.data);
+      
     } catch (err) {
       const status = err.response?.status;
 
@@ -379,8 +381,12 @@ export default function Dashboard() {
 
         {/* ---------- USER: PURCHASES TAB ---------- */}
         {!isAdmin && activeTab === 'purchases' && (
-          <PurchaseHistoryTab hasPurchasedBooks={data.me.hasPurchasedBooks} />
-        )}
+  <PurchaseHistoryTab
+    myRegNo={data.me.regNo}
+    parentRegNo={data.parent?.regNo}
+    hasPurchasedBooks={data.me.hasPurchasedBooks}
+  />
+)}
       </div>
 
       {/* ---------- HELP MODAL ---------- */}
@@ -491,6 +497,7 @@ function PersonRow({ person }) {
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-gray-900 text-sm">{person.name}</p>
         <p className="text-xs text-gray-400 truncate">{person.email} • {person.contactNumber}</p>
+        {person.regNo && <p className="text-xs text-gray-400">Reg ID: {person.regNo}</p>}
       </div>
       <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${ROLE_STYLES[person.role]}`}>
         {getRoleLabel(person.role)}
