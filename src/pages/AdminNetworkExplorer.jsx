@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import api from '../api/axios.js';
 import { groupIntoBatches } from '../utils/batchHelpers';
 import { getRoleLabel } from '../utils/roleLabels';
 
@@ -13,11 +12,10 @@ const ROLE_STYLES = {
 const getInitials = (name) =>
   name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 
-export default function AdminNetworkExplorer({ everyone, adminUser, onUpdated }) {
+export default function AdminNetworkExplorer({ everyone, adminUser }) {
   // pathStack holds the drill-down trail. Empty = viewing Admin's own direct recruits.
   const [pathStack, setPathStack] = useState([]);
   const [search, setSearch] = useState('');
-  const [updatingId, setUpdatingId] = useState(null);
 
   // A lookup map including a synthetic Admin entry, so ancestor-chain building
   // (used by search) always has a root to terminate at.
@@ -59,19 +57,6 @@ export default function AdminNetworkExplorer({ everyone, adminUser, onUpdated })
       setPathStack([]);
     } else {
       setPathStack((prev) => prev.slice(0, index + 1));
-    }
-  };
-
-  const confirmPurchase = async (userId, e) => {
-    e.stopPropagation(); // don't trigger the card's drill-down click
-    setUpdatingId(userId);
-    try {
-      await api.patch(`/admin/users/${userId}/confirm-purchase`);
-      onUpdated();
-    } catch (err) {
-      alert('Failed to update purchase status.');
-    } finally {
-      setUpdatingId(null);
     }
   };
 
@@ -221,8 +206,6 @@ export default function AdminNetworkExplorer({ everyone, adminUser, onUpdated })
               member={member}
               recruitCount={(childrenByParent[member._id] || []).length}
               onClick={() => drillInto(member)}
-              onConfirmPurchase={(e) => confirmPurchase(member._id, e)}
-              updating={updatingId === member._id}
             />
           ))}
         </div>
@@ -257,8 +240,6 @@ export default function AdminNetworkExplorer({ everyone, adminUser, onUpdated })
                     member={member}
                     recruitCount={(childrenByParent[member._id] || []).length}
                     onClick={() => drillInto(member)}
-                    onConfirmPurchase={(e) => confirmPurchase(member._id, e)}
-                    updating={updatingId === member._id}
                   />
                 ))}
               </div>
@@ -270,7 +251,7 @@ export default function AdminNetworkExplorer({ everyone, adminUser, onUpdated })
   );
 }
 
-function MemberCard({ member, recruitCount, onClick, onConfirmPurchase, updating }) {
+function MemberCard({ member, recruitCount, onClick }) {
   return (
     <button
       onClick={onClick}
@@ -291,7 +272,7 @@ function MemberCard({ member, recruitCount, onClick, onConfirmPurchase, updating
         </svg>
       </div>
 
-      <div className="flex items-center flex-wrap gap-1.5 mb-3">
+      <div className="flex items-center flex-wrap gap-1.5">
         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${ROLE_STYLES[member.role]}`}>
           {getRoleLabel(member.role)}
         </span>
@@ -304,16 +285,6 @@ function MemberCard({ member, recruitCount, onClick, onConfirmPurchase, updating
           {recruitCount} recruit{recruitCount === 1 ? '' : 's'}
         </span>
       </div>
-
-      {!member.hasPurchasedBooks && (
-        <span
-          role="button"
-          onClick={onConfirmPurchase}
-          className="inline-block text-xs font-semibold bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 disabled:opacity-60 w-full text-center"
-        >
-          {updating ? 'Updating...' : 'Confirm Purchase'}
-        </span>
-      )}
     </button>
   );
 }
