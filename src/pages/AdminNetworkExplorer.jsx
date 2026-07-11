@@ -92,16 +92,19 @@ export default function AdminNetworkExplorer({ everyone, adminUser }) {
   const totalCount = everyone.length;
   const roCount = everyone.filter((u) => u.role === 'RO').length;
   const soCount = everyone.filter((u) => u.role === 'SO').length;
-  const pendingCount = everyone.filter((u) => !u.hasPurchasedBooks).length;
+  const adminReferredCount = everyone.filter(
+  (u) => String(u.referredBy) === String(adminUser._id)
+).length;
 
   return (
     <div>
       {/* ---- Stat overview ---- */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+         <StatCard label="Admin Referrals" value={adminReferredCount} color="text-purple-600" />
         <StatCard label="Total Members" value={totalCount} color="text-gray-900" />
         <StatCard label="Regional Organizers" value={roCount} color="text-blue-600" />
         <StatCard label="State Organizers" value={soCount} color="text-emerald-600" />
-        <StatCard label="Pending Purchase" value={pendingCount} color="text-amber-600" />
+       
       </div>
 
       {/* ---- Search (jumps to a member's location in the tree) ---- */}
