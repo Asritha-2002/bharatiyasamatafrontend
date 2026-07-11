@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/axios.js';
 import { useAuth } from '../context/AuthContext';
 import AnnualPurchaseBanner from '../componants/AnnualPurchaseBanner';
@@ -53,16 +54,70 @@ const ADMIN_HELP_POINTS = [
 const getInitials = (name) =>
   name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 
+// Turns any axios/network error into a clear, specific message + icon
+// instead of one generic sentence, without changing how errors are stored.
+function resolveErrorDetails(err) {
+  // No response at all — request never reached the server
+  if (!err.response) {
+    if (err.code === 'ECONNABORTED') {
+      return {
+        title: 'Request timed out',
+        message: 'The server is taking too long to respond. Please check your connection and try again.',
+        icon: 'clock'
+      };
+    }
+    return {
+      title: 'Network error',
+      message: 'We couldn\'t reach the server. Please check your internet connection and try again.',
+      icon: 'wifi'
+    };
+  }
+
+  const status = err.response.status;
+
+  if (status === 401 || status === 403) {
+    return {
+      title: 'Session expired',
+      message: 'Please log in again to continue.',
+      icon: 'lock'
+    };
+  }
+
+  if (status === 404) {
+    return {
+      title: 'Not found',
+      message: 'We couldn\'t find your dashboard data. Please try again or contact support if this continues.',
+      icon: 'search'
+    };
+  }
+
+  if (status >= 500) {
+    return {
+      title: 'Server error',
+      message: 'Something went wrong on our end. Please try again in a moment.',
+      icon: 'server'
+    };
+  }
+
+  return {
+    title: 'Something went wrong',
+    message: err.response.data?.error || 'Could not load your dashboard. Please try again.',
+    icon: 'alert'
+  };
+}
+
 /* ============================================================
    MAIN COMPONENT
    ============================================================ */
 
 export default function Dashboard() {
   const { logout } = useAuth();
+  const navigate = useNavigate();
 
   // ---- data state ----
   const [data, setData] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null); // now holds { title, message, icon } or null
+  const [loading, setLoading] = useState(true);
 
   // ---- UI state ----
   const [copied, setCopied] = useState(false);
@@ -71,13 +126,25 @@ export default function Dashboard() {
   const [helpOpen, setHelpOpen] = useState(false);
 
   const fetchDashboard = useCallback(async () => {
+    setError(null);
+    setLoading(true);
     try {
       const res = await api.get('/dashboard/me');
       setData(res.data);
     } catch (err) {
-      setError('Could not load dashboard.');
+      const status = err.response?.status;
+
+      // Not logged in / token invalid or expired — send to login instead of showing an error
+      if (status === 401 || status === 403) {
+        navigate('/login', { replace: true });
+        return;
+      }
+
+      setError(resolveErrorDetails(err));
+    } finally {
+      setLoading(false);
     }
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     fetchDashboard();
@@ -98,8 +165,46 @@ export default function Dashboard() {
     return groupIntoBatches(childrenWithGrandkids);
   }, [childrenWithGrandkids, data]);
 
-  if (error) return <div className="p-6 text-red-600">{error}</div>;
-  if (!data) return <div className="p-6 text-gray-500">Loading dashboard...</div>;
+  // ---------- ERROR STATE ----------
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-white border border-gray-200 rounded-2xl shadow-sm p-8 text-center">
+          <div className="w-14 h-14 rounded-full bg-red-50 text-red-500 flex items-center justify-center mx-auto mb-4">
+            <ErrorIcon type={error.icon} />
+          </div>
+          <h2 className="text-lg font-bold text-gray-900 mb-1">{error.title}</h2>
+          <p className="text-sm text-gray-500 mb-6">{error.message}</p>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={fetchDashboard}
+              className="text-sm font-semibold bg-orange-500 text-white px-5 py-2.5 rounded-lg hover:bg-orange-600 transition-colors"
+            >
+              Try Again
+            </button>
+            <button
+              onClick={logout}
+              className="text-sm font-semibold text-gray-600 border border-gray-300 px-5 py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Log Out
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ---------- LOADING STATE ----------
+  if (loading || !data) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-3 border-gray-200 border-t-orange-500 rounded-full animate-spin" />
+          <p className="text-sm text-gray-500">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   const inviteLink = `${window.location.origin}/register?ref=${data.me.referralCode}`;
 
@@ -118,7 +223,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
-      <div className={isAdmin ? 'max-w-6xl mx-auto' : 'max-w-6xl mx-auto'}>
+      <div className="max-w-6xl mx-auto">
 
         {/* ---------- HEADER ---------- */}
         <div className="flex justify-between items-center mb-6">
@@ -217,12 +322,12 @@ export default function Dashboard() {
 
         {/* ---------- ADMIN: NETWORK TAB ---------- */}
         {isAdmin && activeTab === 'network' && (
-  <AdminNetworkExplorer
-    everyone={data.everyone}
-    adminUser={data.me}
-    onUpdated={fetchDashboard}
-  />
-)}
+          <AdminNetworkExplorer
+            everyone={data.everyone}
+            adminUser={data.me}
+            onUpdated={fetchDashboard}
+          />
+        )}
 
         {/* ---------- ADMIN: REVENUE TAB ---------- */}
         {isAdmin && activeTab === 'revenue' && <RevenueTab />}
@@ -327,9 +432,54 @@ export default function Dashboard() {
 }
 
 /* ============================================================
+   ERROR ICON
+   ============================================================ */
+
+function ErrorIcon({ type }) {
+  const props = { className: 'w-7 h-7', fill: 'none', viewBox: '0 0 24 24', stroke: 'currentColor', strokeWidth: 2 };
+
+  switch (type) {
+    case 'wifi':
+      return (
+        <svg {...props}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.288 15.038a5.25 5.25 0 0 1 7.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12 18.75h.008" />
+        </svg>
+      );
+    case 'clock':
+      return (
+        <svg {...props}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+      );
+    case 'lock':
+      return (
+        <svg {...props}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75M6 10.5h12a1.5 1.5 0 0 1 1.5 1.5v7.5A1.5 1.5 0 0 1 18 21H6a1.5 1.5 0 0 1-1.5-1.5V12A1.5 1.5 0 0 1 6 10.5Z" />
+        </svg>
+      );
+    case 'search':
+      return (
+        <svg {...props}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+        </svg>
+      );
+    case 'server':
+      return (
+        <svg {...props}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 17.25v-.228a4.5 4.5 0 0 0-.12-1.03l-2.268-9.64a3.375 3.375 0 0 0-3.285-2.602H7.923a3.375 3.375 0 0 0-3.285 2.602l-2.268 9.64a4.5 4.5 0 0 0-.12 1.03v.228m19.5 0a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3m19.5 0v.618a2.25 2.25 0 0 1-.659 1.591l-.621.622a2.25 2.25 0 0 1-1.591.659H8.62a2.25 2.25 0 0 1-1.591-.659l-.622-.622a2.25 2.25 0 0 1-.659-1.591v-.618m12 0h-12" />
+        </svg>
+      );
+    default:
+      return (
+        <svg {...props}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m0 3.75h.008M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+      );
+  }
+}
+
+/* ============================================================
    LOCAL SUB-COMPONENTS
-   (kept in this same file, not split out, just organized below
-   the main component for readability)
    ============================================================ */
 
 function PersonRow({ person }) {
