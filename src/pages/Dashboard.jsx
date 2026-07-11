@@ -277,7 +277,7 @@ export default function Dashboard() {
             />
 
             <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
-              <div className="flex items-center justify-between mb-5">
+             <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-5">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-full bg-orange-500 text-white text-lg font-bold flex items-center justify-center flex-shrink-0">
                     {getInitials(data.me.name)}
