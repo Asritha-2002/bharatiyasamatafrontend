@@ -273,6 +273,7 @@ export default function Dashboard() {
             <AnnualPurchaseBanner
               hasPurchasedBooks={data.me.hasPurchasedBooks}
               lastPurchaseYear={data.me.lastPurchaseYear}
+              totalBooksThisYear={data.me.totalBooksThisYear}
             />
 
             <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
