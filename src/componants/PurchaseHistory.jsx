@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios.js';
 import { buildPaymentLink } from '../config.js';
+import { useNavigate } from 'react-router-dom';
 
 export default function PurchaseHistoryTab({ myRegNo, parentRegNo, hasPurchasedBooks }) {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
-
+    const navigate = useNavigate();
   useEffect(() => {
     const fetchHistory = async () => {
       try {
@@ -68,14 +69,12 @@ export default function PurchaseHistoryTab({ myRegNo, parentRegNo, hasPurchasedB
             ? "You've already completed your initial book purchase. You can still buy more books toward your annual requirement anytime."
             : 'Purchase at least 2 books to unlock recruiting.'}
         </p>
-        <a
-          href={paymentLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block bg-orange-500 text-white font-semibold text-sm px-6 py-2.5 rounded-lg hover:bg-orange-600 transition-colors"
-        >
-          Buy Books
-        </a>
+        <button
+  onClick={() => navigate('/checkout')}
+  className="inline-block bg-orange-500 text-white font-semibold text-sm px-6 py-2.5 rounded-lg hover:bg-orange-600 transition-colors"
+>
+  Buy Books
+</button>
         <p className="text-xs text-gray-400 mt-3">
           Your Registration ID is pre-filled automatically. If asked "Who Introduced," enter your parent's Reg ID shown above.
         </p>

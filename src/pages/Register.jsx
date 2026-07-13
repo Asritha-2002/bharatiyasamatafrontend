@@ -4,14 +4,15 @@ import { useAuth } from '../context/AuthContext';
 
 export default function Register() {
   const [searchParams] = useSearchParams();
-  const prefilledCode = searchParams.get('ref') || '';
+  const refFromUrl = searchParams.get('ref') || '';
+  const hasReferral = refFromUrl.trim() !== '';
 
   const [form, setForm] = useState({
     name: '',
     email: '',
     contactNumber: '',
     password: '',
-    referralCode: prefilledCode
+    referralCode: refFromUrl,
   });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -23,13 +24,23 @@ export default function Register() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSubmitting(true);
     try {
-      await register(form);
-      navigate('/welcome');   // was: navigate('/dashboard')
+      // When there's no ref code in the URL, we deliberately don't send a
+      // referralCode field at all -- the backend treats a missing code as
+      // "register under the main admin" and fills in that referredBy itself.
+      // Keeping that decision server-side means it can't be spoofed by
+      // editing form state or the request body in devtools.
+      const { name, email, contactNumber, password, referralCode } = form;
+      const payload = hasReferral
+        ? { name, email, contactNumber, password, referralCode }
+        : { name, email, contactNumber, password };
+
+      await register(payload);
+      navigate('/welcome');
     } catch (err) {
       setError(err.response?.data?.error || 'Something went wrong. Please try again.');
     } finally {
@@ -42,9 +53,9 @@ const handleSubmit = async (e) => {
       <div className="w-full max-w-md bg-white rounded-xl shadow-sm border border-gray-200 p-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Join Bharatiya Samata</h1>
         <p className="text-sm text-gray-500 mb-6">
-          {prefilledCode
-            ? `Registering with referral code: ${prefilledCode}`
-            : 'Enter a referral code from the person who invited you.'}
+          {hasReferral
+            ? `Registering with referral code: ${refFromUrl}`
+            : "You'll be registered under Bharatiya Samata's main network."}
         </p>
 
         {error && (
@@ -103,17 +114,23 @@ const handleSubmit = async (e) => {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Referral Code</label>
-            <input
-              type="text"
-              name="referralCode"
-              value={form.referralCode}
-              onChange={handleChange}
-              placeholder="Code from the person who invited you"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-            />
-          </div>
+          {/* Referral Code only appears when the invite link actually carried
+              one. With no ?ref= in the URL, this field is omitted entirely --
+              not shown disabled, not shown pre-filled -- so there's nothing
+              here for the person to second-guess or try to edit. */}
+          {hasReferral && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Referral Code</label>
+              <input
+                type="text"
+                name="referralCode"
+                value={form.referralCode}
+                onChange={handleChange}
+                placeholder="Code from the person who invited you"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+              />
+            </div>
+          )}
 
           <button
             type="submit"

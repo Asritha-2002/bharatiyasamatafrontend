@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -65,6 +66,7 @@ export default function Login() {
               >
                 {showPassword ? <EyeIcon /> : <EyeOffIcon />}
               </button>
+              
             </div>
           </div>
 
@@ -75,6 +77,15 @@ export default function Login() {
           >
             {submitting ? 'Logging in...' : 'Log In'}
           </button>
+          <p className="text-center text-sm text-gray-600 mt-4">
+  Don't have an account?{' '}
+  <Link
+    to="/register"
+    className="text-orange-500 font-semibold hover:text-orange-600 hover:underline"
+  >
+    Register here
+  </Link>
+</p>
         </form>
       </div>
     </div>
