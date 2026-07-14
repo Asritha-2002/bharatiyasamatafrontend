@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext.jsx';
 import AdminNetworkExplorer from '../componants/AdminNetworkExplorer.jsx';
 import RevenueTab from '../componants/RevenueTab.jsx';
 import AdminSidebar from '../componants/AdminSidebar.jsx';
-import PendingSection from '../componants/PendingSection.jsx';
 import ManageBanner from '../componants/ManageBanner.jsx';
 import HelpModal from '../componants/HelpModal.jsx';
 import { OfflineBanner, SlowConnectionNotice, DashboardIssueCard } from '../componants/ConnectionNotice.jsx';
@@ -13,22 +12,18 @@ import { DashboardLoading } from '../componants/DashboardStates.jsx';
 import { resolveErrorDetails } from '../utils/dashboardHelpers.js';
 import ManageGallery from '../componants/ManageGallery.jsx';
 import ManageBlogs from '../componants/ManageBlogs.jsx';
+import ManageContact from '../componants/ManageContact.jsx';
+import ManageHierarchy from '../componants/ManageHierarchy.jsx';
 const SIDEBAR_ITEMS = [
   { key: 'network', label: 'Network', path: '/admin/network', implemented: true },
+  { key: 'hierarchy', label: 'Hierarchy Lookup', path: '/admin/hierarchy', implemented: true }, // NEW
   { key: 'revenue', label: 'Revenue / Books Sold', path: '/admin/revenue', implemented: true },
   { key: 'blogs', label: 'Manage Blogs', path: '/admin/blogs', implemented: true },
   { key: 'banner', label: 'Manage Banner Image', path: '/admin/banner', implemented: true },
   { key: 'gallery', label: 'Manage Gallery', path: '/admin/gallery', implemented: true },
-  { key: 'contact', label: 'Contact History', path: '/admin/contact', implemented: false },
+  { key: 'contact', label: 'Contact History', path: '/admin/contact', implemented: true },
 ];
 
-const PENDING_COPY = {
- 
-  contact: {
-    title: 'Contact History',
-    description: "This section hasn't been built yet. Submitted contact requests will show up here soon.",
-  },
-};
 
 const ADMIN_HELP_POINTS = [
   { title: 'Referral Code', text: 'Share your admin referral code to onboard new ROs directly under you.' },
@@ -43,6 +38,7 @@ const SLOW_REQUEST_THRESHOLD = 8000;
 function resolveActiveKey(pathname) {
   const path = pathname.toLowerCase();
   if (path.includes('revenue')) return 'revenue';
+  if (path.includes('hierarchy')) return 'hierarchy';
   if (path.includes('blog')) return 'blogs';
   if (path.includes('banner')) return 'banner';
   if (path.includes('gallery')) return 'gallery';
@@ -163,7 +159,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
       <AdminSidebar
         items={SIDEBAR_ITEMS}
         activeKey={activeKey}
@@ -215,8 +211,15 @@ export default function AdminDashboard() {
                           {copied ? 'Copied!' : 'Copy Invite Link'}
                         </button>
                         <span className="text-xs text-gray-400 break-all">{inviteLink}</span>
+                        
                       </div>
+                       <div className="mt-3 pt-3 border-t border-gray-100">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Your Registration ID</p>
+        <code className="bg-gray-100 px-3 py-1.5 rounded text-sm font-mono">{data.me.regNo}</code>
+      </div>
+                      
                     </div>
+                    
 
                     <AdminNetworkExplorer everyone={data.everyone} adminUser={data.me} onUpdated={fetchDashboard} />
                   </>
@@ -226,8 +229,9 @@ export default function AdminDashboard() {
                 {activeKey === 'blogs' && <ManageBlogs />}
                 {activeKey === 'banner' && <ManageBanner />}
                 {activeKey === 'gallery' && <ManageGallery />}
+                {activeKey === 'contact' && <ManageContact />}
+                {activeKey === 'hierarchy' && <ManageHierarchy />}
 
-                {PENDING_COPY[activeKey] && <PendingSection {...PENDING_COPY[activeKey]} />}
               </>
             )}
           </div>

@@ -1,6 +1,5 @@
-import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api/axios.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import AnnualPurchaseBanner from '../componants/AnnualPurchaseBanner.jsx';
 import PurchaseHistoryTab from '../componants/PurchaseHistory.jsx';
@@ -8,9 +7,10 @@ import Tabs from '../componants/Tabs.jsx';
 import HelpModal from '../componants/HelpModal.jsx';
 import { OfflineBanner, SlowConnectionNotice, DashboardIssueCard } from '../componants/ConnectionNotice.jsx';
 import { DashboardLoading } from '../componants/DashboardStates.jsx';
-import { getInitials, resolveErrorDetails, ROLE_STYLES } from '../utils/dashboardHelpers.js';
+import { getInitials, ROLE_STYLES } from '../utils/dashboardHelpers.js';
 import { groupIntoBatches } from '../utils/batchHelpers.js';
 import { getRoleLabel } from '../utils/roleLabels.js';
+import { useDashboardData } from '../hooks/useDashboardData.js';
 
 const USER_TABS = [
   { key: 'network', label: 'My Network' },
@@ -26,109 +26,27 @@ const USER_HELP_POINTS = [
   { title: 'Getting Promoted', text: "Your invite link becomes active once you're promoted to RO. Until then, focus on completing your book purchase." }
 ];
 
-// How long a request can run before we tell the person it's slow (ms).
-const SLOW_REQUEST_THRESHOLD = 8000;
-
-// Turns a caught error into { type, title, message } so the UI can show the
-// right message: fully offline, request never reached the server (network/
-// timeout), or a normal server-side error.
-function classifyError(err) {
-  if (!navigator.onLine) {
-    return {
-      type: 'offline',
-      title: "You're offline",
-      message: 'Check your internet connection, then try again.',
-    };
-  }
-
-  const isNetworkLevelFailure = !err.response || err.code === 'ECONNABORTED' || err.message === 'Network Error';
-  if (isNetworkLevelFailure) {
-    return {
-      type: 'network',
-      title: 'Connection problem',
-      message: "We couldn't reach the server. Your connection may be slow or unstable — try again in a moment.",
-    };
-  }
-
-  const details = resolveErrorDetails(err) || {};
-  return {
-    type: 'server',
-    title: details.title || 'Something went wrong',
-    message: details.message || 'Please try again.',
-  };
+// Kept as a stable module-level function (rather than an inline arrow in the
+// component) so its identity never changes across renders -- otherwise
+// useDashboardData's fetchDashboard would be recreated every render and
+// re-fetch in a loop.
+function redirectIfAdmin(data) {
+  return data.role === 'ADMIN' ? '/admin' : null;
 }
 
 export default function UserDashboard() {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { data, error, loading, isOnline, slowConnection, fetchDashboard } = useDashboardData({
+    navigate,
+    guard: redirectIfAdmin,
+  });
+
   const [copied, setCopied] = useState(false);
+  const [expandedChild, setExpandedChild] = useState(null);
   const [activeTab, setActiveTab] = useState('network');
   const [helpOpen, setHelpOpen] = useState(false);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [slowConnection, setSlowConnection] = useState(false);
-  const slowTimerRef = useRef(null);
-
-  const fetchDashboard = useCallback(async () => {
-    setError(null);
-    setLoading(true);
-    setSlowConnection(false);
-
-    clearTimeout(slowTimerRef.current);
-    slowTimerRef.current = setTimeout(() => setSlowConnection(true), SLOW_REQUEST_THRESHOLD);
-
-    try {
-      const res = await api.get('/dashboard/me');
-
-      // Safety check: if Admin somehow lands here, redirect them to their own view
-      if (res.data.role === 'ADMIN') {
-        navigate('/admin', { replace: true });
-        return;
-      }
-
-      setData(res.data);
-    } catch (err) {
-      const status = err.response?.status;
-      if (status === 401 || status === 403) {
-        navigate('/login', { replace: true });
-        return;
-      }
-      setError(classifyError(err));
-    } finally {
-      clearTimeout(slowTimerRef.current);
-      setSlowConnection(false);
-      setLoading(false);
-    }
-  }, [navigate]);
-
-  useEffect(() => {
-    fetchDashboard();
-    return () => clearTimeout(slowTimerRef.current);
-  }, [fetchDashboard]);
-
-  // Keep isOnline in sync with the browser, and offer a message the moment
-  // the connection drops -- even if the dashboard is already loaded.
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-
-  // If we come back online while sitting on an error, try again automatically.
-  useEffect(() => {
-    if (isOnline && error) {
-      fetchDashboard();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOnline]);
 
   const childrenWithGrandkids = useMemo(() => {
     if (!data) return [];
@@ -151,7 +69,8 @@ export default function UserDashboard() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-
+  const toggleChild = (childId) =>
+    setExpandedChild((current) => (current === childId ? null : childId));
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
@@ -262,7 +181,12 @@ export default function UserDashboard() {
                   ) : (
                     <div className="space-y-5">
                       {childBatches.map((batch) => (
-                        <BatchGroup key={batch.batchNumber} batch={batch} />
+                        <BatchGroup
+                          key={batch.batchNumber}
+                          batch={batch}
+                          expandedChild={expandedChild}
+                          onToggleChild={toggleChild}
+                        />
                       ))}
                     </div>
                   )}
@@ -314,7 +238,7 @@ function EmptyRow({ text }) {
   );
 }
 
-function BatchGroup({ batch }) {
+function BatchGroup({ batch, expandedChild, onToggleChild }) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-2">
@@ -332,41 +256,70 @@ function BatchGroup({ batch }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="space-y-2">
         {batch.members.map((child) => (
-          <RecruitRow key={child._id} child={child} />
+          <RecruitRow key={child._id} child={child} isOpen={expandedChild === child._id} onToggle={() => onToggleChild(child._id)} />
         ))}
       </div>
     </div>
   );
 }
 
-function RecruitRow({ child }) {
+function RecruitRow({ child, isOpen, onToggle }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3">
-      <div className="flex items-center gap-3 min-w-0">
-        <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 text-sm font-bold flex items-center justify-center flex-shrink-0">
-          {getInitials(child.name)}
+    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <button onClick={onToggle} className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors text-left">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 text-sm font-bold flex items-center justify-center flex-shrink-0">
+            {getInitials(child.name)}
+          </div>
+          <div>
+            <p className="font-semibold text-gray-900 text-sm">{child.name}</p>
+            <p className="text-xs text-gray-400">{child.email} • {child.contactNumber}</p>
+          </div>
         </div>
-        <div className="min-w-0">
-          <p className="font-semibold text-gray-900 text-sm truncate">{child.name}</p>
-          <p className="text-xs text-gray-400 truncate">{child.email}</p>
+
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${ROLE_STYLES[child.role]}`}>{child.role}</span>
+          {child.hasPurchasedBooks ? (
+            <span className="text-emerald-600 text-xs font-semibold">✓ Purchased</span>
+          ) : (
+            <span className="text-amber-600 text-xs font-semibold">Pending</span>
+          )}
+          <span className="text-xs text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">
+            {child.grandkids.length} recruit{child.grandkids.length === 1 ? '' : 's'}
+          </span>
+          <svg className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
         </div>
-      </div>
+      </button>
 
-      <p className="text-xs text-gray-400 truncate">{child.contactNumber}</p>
-
-      <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-gray-100">
-        <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${ROLE_STYLES[child.role]}`}>{child.role}</span>
-        {child.hasPurchasedBooks ? (
-          <span className="text-emerald-600 text-xs font-semibold">✓ Purchased</span>
-        ) : (
-          <span className="text-amber-600 text-xs font-semibold">Pending</span>
-        )}
-        <span className="text-xs text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">
-          {child.grandkids.length} recruit{child.grandkids.length === 1 ? '' : 's'}
-        </span>
-      </div>
+      {isOpen && (
+        <div className="border-t border-gray-100 bg-gray-50 p-4 pl-8">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{child.name}'s Recruits</p>
+          {child.grandkids.length === 0 ? (
+            <p className="text-sm text-gray-400 italic">No children yet.</p>
+          ) : (
+            <div className="grid sm:grid-cols-2 gap-2">
+              {child.grandkids.map((gk) => (
+                <div key={gk._id} className="bg-white border border-gray-200 rounded-lg p-3 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 text-xs font-bold flex items-center justify-center flex-shrink-0">
+                    {getInitials(gk.name)}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-medium text-gray-900 text-sm truncate">{gk.name}</p>
+                    <p className="text-xs text-gray-400 truncate">{gk.email}</p>
+                  </div>
+                  <span className={`ml-auto text-xs font-bold px-2 py-0.5 rounded-full border flex-shrink-0 ${ROLE_STYLES[gk.role]}`}>
+                    {getRoleLabel(gk.role)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

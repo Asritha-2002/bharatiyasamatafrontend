@@ -16,7 +16,7 @@ export default function Header() {
   }, []);
 
   const navLinks = [
-    { label: "Home", href: "#top" },
+    { label: "Home", href: "/" },
     { label: "Book Donation", href: "#books" },
     { label: "How Do I Help", href: "#help" },
     { label: "About", href: "#about" },
@@ -28,7 +28,7 @@ export default function Header() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white shadow-md py-2" : "bg-white/90 py-3"}`}
     >
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
-        <a href="#top" className="flex items-center gap-3">
+        <a href="/" className="flex items-center gap-3">
           <img
             src={logo}
             alt="Logo"

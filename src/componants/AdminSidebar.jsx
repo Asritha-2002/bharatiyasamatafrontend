@@ -36,18 +36,28 @@ const ICONS = {
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" />
     </svg>
   ),
+  hierarchy: (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+    <circle cx="12" cy="4" r="2" />
+    <circle cx="6" cy="12" r="2" />
+    <circle cx="18" cy="12" r="2" />
+    <circle cx="6" cy="20" r="2" />
+    <circle cx="18" cy="20" r="2" />
+    <path d="M12 6v3M9 10l-2 1M15 10l2 1M6 14v4M18 14v4" />
+  </svg>
+),
 };
 
 export default function AdminSidebar({ items, activeKey, onNavigate }) {
   return (
-    <aside className="w-full md:w-64 shrink-0 bg-white border-b md:border-b-0 md:border-r border-gray-200 flex flex-col md:h-screen sticky top-0 z-20">
+    <aside className="w-full md:w-64 shrink-0 bg-white border-b md:border-b-0 md:border-r border-gray-200 shadow-sm md:shadow-none flex flex-col md:h-screen sticky top-0 z-20">
       {/* Brand Logo Section: Hidden on mobile since header already occupies top space */}
       <div className="h-16 hidden md:flex items-center px-6 border-b border-gray-200">
         <span className="text-lg font-bold text-gray-900">Admin</span>
       </div>
 
       {/* Navigation Layout: Horizontal scroll on mobile, Vertical stack on desktop */}
-      <nav className="flex flex-row md:flex-col px-3 py-2 md:py-4 gap-1 overflow-x-auto md:overflow-x-visible md:overflow-y-auto style-scrollbar-none">
+      <nav className="flex flex-row md:flex-col px-2 sm:px-3 py-2 md:py-4 gap-1 overflow-x-auto md:overflow-x-visible md:overflow-y-auto style-scrollbar-none">
         {items.map((item) => {
           const isActive = item.key === activeKey;
           return (
@@ -56,13 +66,13 @@ export default function AdminSidebar({ items, activeKey, onNavigate }) {
               type="button"
               onClick={() => onNavigate(item)}
               aria-current={isActive ? 'page' : undefined}
-              className={`flex items-center gap-2 md:gap-3 px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium text-left transition-colors whitespace-nowrap shrink-0 ${
+              className={`flex items-center gap-1.5 sm:gap-2 md:gap-3 px-2.5 sm:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium text-left transition-colors whitespace-nowrap shrink-0 ${
                 isActive
                   ? 'bg-orange-50 text-orange-600'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               }`}
             >
-              <span className={isActive ? 'text-orange-500' : 'text-gray-400'}>{ICONS[item.key]}</span>
+              <span className={`shrink-0 ${isActive ? 'text-orange-500' : 'text-gray-400'}`}>{ICONS[item.key]}</span>
               <span>{item.label}</span>
               {!item.implemented && (
                 <span className="text-[9px] md:text-[10px] uppercase tracking-wide font-semibold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded ml-1 md:ml-0">

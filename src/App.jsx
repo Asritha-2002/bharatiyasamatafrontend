@@ -25,6 +25,7 @@ import Gallery from './pages/Gallery.jsx';
 import Blogs from './componants/Blogs.jsx';
 import BlogDetail from './pages/BlogDetail.jsx';
 import Checkout from './pages/Checkout.jsx';
+import VolunteerSection from './componants/VolunteerSection.jsx';
 
 
 // The public homepage — all your marketing sections, in one place
@@ -38,9 +39,10 @@ function HomePage() {
         <WelcomeSection />
         <BookDonation />
         <HowDoIHelp />
+        <TheyNeedHelp/>
         <About />
         <HelpTogether />
-        <TheyNeedHelp />
+        <VolunteerSection/>
         <Contact />
       </main>
       <Footer />
