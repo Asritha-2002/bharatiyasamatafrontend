@@ -14,6 +14,8 @@ import ManageGallery from '../componants/ManageGallery.jsx';
 import ManageBlogs from '../componants/ManageBlogs.jsx';
 import ManageContact from '../componants/ManageContact.jsx';
 import ManageHierarchy from '../componants/ManageHierarchy.jsx';
+import ManageKyc from '../componants/ManageKyc.jsx';
+import ManagePayouts from '../componants/ManagePayouts.jsx';
 const SIDEBAR_ITEMS = [
   { key: 'network', label: 'Network', path: '/admin/network', implemented: true },
   { key: 'hierarchy', label: 'Hierarchy Lookup', path: '/admin/hierarchy', implemented: true }, // NEW
@@ -22,6 +24,8 @@ const SIDEBAR_ITEMS = [
   { key: 'banner', label: 'Manage Banner Image', path: '/admin/banner', implemented: true },
   { key: 'gallery', label: 'Manage Gallery', path: '/admin/gallery', implemented: true },
   { key: 'contact', label: 'Contact History', path: '/admin/contact', implemented: true },
+  { key: 'kyc', label: 'KYC Verification', path: '/admin/kyc', implemented: true },
+{ key: 'payouts', label: 'SO Payouts', path: '/admin/payouts', implemented: true },
 ];
 
 
@@ -42,6 +46,8 @@ function resolveActiveKey(pathname) {
   if (path.includes('blog')) return 'blogs';
   if (path.includes('banner')) return 'banner';
   if (path.includes('gallery')) return 'gallery';
+  if (path.includes('kyc')) return 'kyc';
+  if (path.includes('payout')) return 'payouts';
   if (path.includes('contact')) return 'contact';
   return 'network';
 }
@@ -231,6 +237,8 @@ export default function AdminDashboard() {
                 {activeKey === 'gallery' && <ManageGallery />}
                 {activeKey === 'contact' && <ManageContact />}
                 {activeKey === 'hierarchy' && <ManageHierarchy />}
+                {activeKey === 'kyc' && <ManageKyc />}
+                {activeKey === 'payouts' && <ManagePayouts />}
 
               </>
             )}

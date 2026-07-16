@@ -26,6 +26,9 @@ import Blogs from './componants/Blogs.jsx';
 import BlogDetail from './pages/BlogDetail.jsx';
 import Checkout from './pages/Checkout.jsx';
 import VolunteerSection from './componants/VolunteerSection.jsx';
+import Kyc from './pages/Kyc.jsx';
+import ManageKyc from './componants/ManageKyc.jsx';
+import ManagePayouts from './componants/ManagePayouts.jsx';
 
 
 // The public homepage — all your marketing sections, in one place
@@ -63,6 +66,7 @@ function App() {
           <Route path="/view-blogs" element={<Blogs />} />
           <Route path="/blogs/:sku" element={<BlogDetail />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/kyc" element={<Kyc />} />
 
           <Route
             path="/dashboard"

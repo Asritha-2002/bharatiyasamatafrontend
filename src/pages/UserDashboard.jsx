@@ -11,6 +11,8 @@ import { DashboardLoading } from '../componants/DashboardStates.jsx';
 import { getInitials, resolveErrorDetails, ROLE_STYLES } from '../utils/dashboardHelpers.js';
 import { groupIntoBatches } from '../utils/batchHelpers.js';
 import { getRoleLabel } from '../utils/roleLabels.js';
+import { getMyKyc } from '../api/kyc.js';
+import MyPayoutSchedule from '../componants/MyPayoutSchedule.jsx';
 
 const USER_TABS = [
   { key: 'network', label: 'My Network' },
@@ -72,6 +74,10 @@ export default function UserDashboard() {
   const [slowConnection, setSlowConnection] = useState(false);
   const slowTimerRef = useRef(null);
 
+  // KYC status is only relevant for SO members, fetched separately once we
+  // know the role -- avoids touching the existing /dashboard/me response shape.
+  const [kycStatus, setKycStatus] = useState(null); // null while unknown/loading, or 'PENDING' | 'APPROVED' | 'REJECTED' | 'NOT_SUBMITTED'
+
   const fetchDashboard = useCallback(async () => {
     setError(null);
     setLoading(true);
@@ -130,6 +136,26 @@ export default function UserDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOnline]);
 
+  // Once we know the person is an SO, check whether they've completed KYC.
+  useEffect(() => {
+    if (data?.me?.role !== 'SO') return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await getMyKyc();
+        if (cancelled) return;
+        setKycStatus(res.data.submission ? res.data.submission.status : 'NOT_SUBMITTED');
+      } catch {
+        // Non-critical -- if this fails, we just don't show the banner rather
+        // than blocking the rest of the dashboard.
+        if (!cancelled) setKycStatus(null);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [data?.me?.role]);
+
   const childrenWithGrandkids = useMemo(() => {
     if (!data) return [];
     return data.children.map((child) => ({
@@ -151,7 +177,16 @@ export default function UserDashboard() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const showKycPrompt = data?.me?.role === 'SO' && (kycStatus === 'NOT_SUBMITTED' || kycStatus === 'REJECTED' || kycStatus === 'PENDING');
+  const showPayoutsTab = data?.me?.role === 'SO' && kycStatus === 'APPROVED';
 
+  // Payouts tab only appears once KYC is approved -- otherwise the tab bar
+  // stays exactly as it was for every other role/status.
+  const tabs = useMemo(() => {
+    const base = [...USER_TABS];
+    if (showPayoutsTab) base.push({ key: 'payouts', label: 'Payouts' });
+    return base;
+  }, [showPayoutsTab]);
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
@@ -184,6 +219,8 @@ export default function UserDashboard() {
           </>
         ) : (
           <>
+            {showKycPrompt && <KycPromptBanner status={kycStatus} onClick={() => navigate('/kyc')} />}
+
             <AnnualPurchaseBanner
               hasPurchasedBooks={data.me.hasPurchasedBooks}
               lastPurchaseYear={data.me.lastPurchaseYear}
@@ -232,7 +269,7 @@ export default function UserDashboard() {
               </div>
             </div>
 
-            <Tabs tabs={USER_TABS} activeTab={activeTab} onChange={setActiveTab} />
+            <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
             {activeTab === 'network' && (
               <div className="space-y-6">
@@ -277,6 +314,8 @@ export default function UserDashboard() {
                 hasPurchasedBooks={data.me.hasPurchasedBooks}
               />
             )}
+
+            {activeTab === 'payouts' && showPayoutsTab && <MyPayoutSchedule />}
           </>
         )}
       </div>
@@ -287,6 +326,44 @@ export default function UserDashboard() {
 }
 
 /* ---- Local sub-components ---- */
+
+function KycPromptBanner({ status, onClick }) {
+  const copy = {
+    NOT_SUBMITTED: {
+      title: "You've been promoted to State Organizer — complete your KYC",
+      message: "To receive payments, please complete your KYC using your Aadhaar card and upload your bank details, including a cancelled cheque.",
+      tone: 'bg-blue-50 border-blue-200 text-blue-800',
+      button: 'Complete KYC',
+    },
+    REJECTED: {
+      title: 'Your KYC submission needs attention',
+      message: 'Your previous KYC submission was rejected. Please review and resubmit your details.',
+      tone: 'bg-red-50 border-red-200 text-red-800',
+      button: 'Resubmit KYC',
+    },
+    PENDING: {
+      title: 'Your KYC is under review',
+      message: "We've received your KYC details and they're being reviewed by our team.",
+      tone: 'bg-amber-50 border-amber-200 text-amber-800',
+      button: 'View submission',
+    },
+  }[status];
+
+  return (
+    <div className={`border rounded-xl px-5 py-4 mb-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 ${copy.tone}`}>
+      <div className="flex-1">
+        <p className="font-semibold text-sm">{copy.title}</p>
+        <p className="text-xs mt-0.5 opacity-90">{copy.message}</p>
+      </div>
+      <button
+        onClick={onClick}
+        className="text-xs font-semibold bg-white px-4 py-2 rounded-lg border border-current hover:bg-black/5 transition-colors whitespace-nowrap flex-shrink-0"
+      >
+        {copy.button}
+      </button>
+    </div>
+  );
+}
 
 function PersonRow({ person }) {
   return (

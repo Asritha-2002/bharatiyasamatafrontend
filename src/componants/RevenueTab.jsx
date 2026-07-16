@@ -68,7 +68,7 @@ export default function RevenueTab() {
         <StatCard label="Total Revenue" value={`₹${summary.totalRevenue.toLocaleString()}`} />
         <StatCard label="Books Sold" value={summary.booksSold.toLocaleString()} />
         <StatCard label="Transactions" value={summary.transactions.toLocaleString()} />
-        <StatCard label="Avg. Order Value" value={`₹${summary.avgOrderValue.toLocaleString()}`} />
+        {/* <StatCard label="Avg. Order Value" value={`₹${summary.avgOrderValue.toLocaleString()}`} /> */}
       </div>
 
       {/* Transactions */}

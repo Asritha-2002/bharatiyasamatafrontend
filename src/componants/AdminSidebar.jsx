@@ -46,6 +46,21 @@ const ICONS = {
     <path d="M12 6v3M9 10l-2 1M15 10l2 1M6 14v4M18 14v4" />
   </svg>
 ),
+kyc: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <circle cx="8.5" cy="11" r="1.75" />
+      <path d="M5.5 16c.5-1.7 1.8-2.5 3-2.5s2.5.8 3 2.5" />
+      <path d="M14 9h5M14 13h3.5" />
+    </svg>
+  ),
+  payouts: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+      <rect x="2" y="7" width="20" height="10" rx="2" />
+      <circle cx="12" cy="12" r="2.5" />
+      <path d="M6 9v.01M18 15v.01" />
+    </svg>
+  ),
 };
 
 export default function AdminSidebar({ items, activeKey, onNavigate }) {
