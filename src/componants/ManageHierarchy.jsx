@@ -102,7 +102,7 @@ export default function ManageHierarchy() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            placeholder="e.g. BSHP-0042"
+            placeholder="e.g. AP26BS0042"
             className="flex-1 sm:flex-none sm:w-72 border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-orange-400"
           />
           <button
