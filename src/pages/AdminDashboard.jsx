@@ -19,7 +19,7 @@ import ManagePayouts from '../componants/ManagePayouts.jsx';
 const SIDEBAR_ITEMS = [
   { key: 'network', label: 'Network', path: '/admin/network', implemented: true },
   { key: 'hierarchy', label: 'Hierarchy Lookup', path: '/admin/hierarchy', implemented: true }, // NEW
-  { key: 'revenue', label: 'Revenue / Books Sold', path: '/admin/revenue', implemented: true },
+  { key: 'revenue', label: 'Total Helped Books Money', path: '/admin/revenue', implemented: true },
   { key: 'blogs', label: 'Manage Blogs', path: '/admin/blogs', implemented: true },
   { key: 'banner', label: 'Manage Banner Image', path: '/admin/banner', implemented: true },
   { key: 'gallery', label: 'Manage Gallery', path: '/admin/gallery', implemented: true },

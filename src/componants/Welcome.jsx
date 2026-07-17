@@ -1,4 +1,5 @@
 export default function Welcome() {
+  const currentYearSuffix = new Date().getFullYear().toString().slice(-2);
   return (
     <section className="py-16 bg-[#FFFFFF]">
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
@@ -12,7 +13,7 @@ export default function Welcome() {
         <div className="order-1 md:order-2">
           <p className="text-[#F4882A] font-heading text-xl font-semibold">Welcome</p>
           <h2 className="font-heading text-2xl md:text-4xl font-bold text-[#344256] mt-2">
-            National Integration Programme -25
+            National Integration Programme -{currentYearSuffix}
           </h2>
           <div className="w-20 h-0.5 bg-[#F4882A] my-4" />
           <div className="space-y-4 text-sm md:text-base text-gray-700">

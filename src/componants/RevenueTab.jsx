@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { getRevenueOverview } from '../api/revenue.js';
 import { downloadInvoicePDF } from '../utils/invoiceGenerator.js';
+import NetworkSearchFilter from './NetworkSearchFilterRevenue.jsx';
 
 function formatDate(iso) {
   const d = new Date(iso);
@@ -17,6 +18,8 @@ export default function RevenueTab() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [downloadingId, setDownloadingId] = useState(null);
+
+  const [searchQuery, setSearchQuery] = useState('');
 
   const load = async () => {
     setLoading(true);
@@ -48,6 +51,20 @@ export default function RevenueTab() {
     }
   };
 
+  // Filters by name/email/mobile/Reg No only.
+  const filteredTransactions = useMemo(() => {
+    if (!searchQuery.trim()) return transactions;
+
+    const q = searchQuery.toLowerCase();
+    return transactions.filter(
+      (t) =>
+        (t.booksHelperName || '').toLowerCase().includes(q) ||
+        (t.email || '').toLowerCase().includes(q) ||
+        (t.mobilePhone || '').toLowerCase().includes(q) ||
+        (t.regNo || '').toLowerCase().includes(q)
+    );
+  }, [transactions, searchQuery]);
+
   if (loading || !summary) {
     return <p className="text-sm text-gray-500">Loading revenue data...</p>;
   }
@@ -73,14 +90,21 @@ export default function RevenueTab() {
 
       {/* Transactions */}
       <div>
+        <NetworkSearchFilter
+          query={searchQuery}
+          onQueryChange={setSearchQuery}
+        />
+
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-gray-900 text-sm">Recent Transactions</h3>
-          <p className="text-xs text-gray-400">{transactions.length} total</p>
+          <p className="text-xs text-gray-400">{filteredTransactions.length} of {transactions.length}</p>
         </div>
 
-        {transactions.length === 0 ? (
+        {filteredTransactions.length === 0 ? (
           <div className="bg-white border border-gray-200 rounded-2xl px-6 py-10 text-center">
-            <p className="text-sm text-gray-400 italic">No transactions yet.</p>
+            <p className="text-sm text-gray-400 italic">
+              {transactions.length === 0 ? 'No transactions yet.' : 'No transactions match this search.'}
+            </p>
           </div>
         ) : (
           <>
@@ -99,11 +123,12 @@ export default function RevenueTab() {
                     </tr>
                   </thead>
                   <tbody>
-                    {transactions.map((t, index) => (
+                    {filteredTransactions.map((t, index) => (
                       <tr key={t._id} className="border-b border-gray-100 last:border-0 align-top">
                         <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{index + 1}</td>
                         <td className="px-4 py-3 text-gray-600">
                           <p className="font-medium text-gray-900 whitespace-nowrap">{t.booksHelperName || 'Not provided'}</p>
+                          <p className="text-xs text-gray-500 mt-1">{t.regNo || '—'}</p>
                           <p className="whitespace-nowrap">{t.mobilePhone || '—'}</p>
                           <p className="text-xs text-gray-400 break-all">{t.email || '—'}</p>
                         </td>
@@ -131,7 +156,7 @@ export default function RevenueTab() {
 
             {/* Mobile: stacked cards */}
             <div className="md:hidden space-y-3">
-              {transactions.map((t, index) => (
+              {filteredTransactions.map((t, index) => (
                 <div key={t._id} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <p className="font-semibold text-gray-900 text-sm">#{index + 1} · {t.booksHelperName || 'Not provided'}</p>
@@ -139,6 +164,7 @@ export default function RevenueTab() {
 
                   <p className="text-xs text-gray-500">{t.mobilePhone || '—'}</p>
                   <p className="text-xs text-gray-500 break-all mb-2">{t.email || '—'}</p>
+                  <p className="text-xs text-gray-500 mb-2">{t.regNo || '—'}</p>
 
                   <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 bg-gray-50 rounded-lg p-3 mb-3">
                     <div>

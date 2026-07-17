@@ -204,26 +204,24 @@ export default function PurchaseHistoryTab({ myRegNo, parentRegNo, hasPurchasedB
         </div>
       </div>
 
-      {/* Buy Books */}
+      {/* Help Books */}
       <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center">
         <div className="w-12 h-12 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mx-auto mb-3 text-xl">
           📚
         </div>
-        <h3 className="font-bold text-gray-900 mb-1">Purchase Books</h3>
+        <h3 className="font-bold text-gray-900 mb-1">Help Books</h3>
         <p className="text-sm text-gray-500 max-w-sm mx-auto mb-4">
           {hasPurchasedBooks
-            ? "You've already completed your initial book purchase. You can still buy more books toward your annual requirement anytime."
-            : 'Purchase at least 2 books to unlock recruiting.'}
+            ? "You've already completed your initial books helping. You can still help more books toward your annual requirement anytime."
+            : 'Help at least 2 books to unlock recruiting.'}
         </p>
         <button
           onClick={() => navigate('/checkout')}
           className="inline-block bg-orange-500 text-white font-semibold text-sm px-6 py-2.5 rounded-lg hover:bg-orange-600 transition-colors"
         >
-          Buy Books
+          Help Books
         </button>
-        <p className="text-xs text-gray-400 mt-3">
-          Your Registration ID is pre-filled automatically. If asked "Who Introduced," enter your parent's Reg ID shown above.
-        </p>
+        
       </div>
 
       {/* History */}

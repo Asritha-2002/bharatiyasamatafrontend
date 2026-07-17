@@ -218,7 +218,7 @@ export default function AdminNetworkExplorer({ everyone, adminUser }) {
                         <th className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Member</th>
                         <th className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Reg No</th>
                         <th className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Role</th>
-                        <th className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Purchase</th>
+                        <th className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Status</th>
                         <th className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Recruits</th>
                         <th className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide text-right">Action</th>
                       </tr>
@@ -247,7 +247,7 @@ export default function AdminNetworkExplorer({ everyone, adminUser }) {
                             </td>
                             <td className="px-4 py-3">
                               {member.hasPurchasedBooks ? (
-                                <span className="text-emerald-600 text-xs font-semibold whitespace-nowrap">✓ Purchased</span>
+                                <span className="text-emerald-600 text-xs font-semibold whitespace-nowrap">✓ Helped</span>
                               ) : (
                                 <span className="text-amber-600 text-xs font-semibold whitespace-nowrap">Pending</span>
                               )}
@@ -298,7 +298,7 @@ export default function AdminNetworkExplorer({ everyone, adminUser }) {
                         <span className="text-gray-400 font-mono">{member.regNo || '—'}</span>
                         <span className="text-gray-300">·</span>
                         {member.hasPurchasedBooks ? (
-                          <span className="text-emerald-600 font-semibold">✓ Purchased</span>
+                          <span className="text-emerald-600 font-semibold">✓ Helped</span>
                         ) : (
                           <span className="text-amber-600 font-semibold">Pending</span>
                         )}
@@ -385,7 +385,7 @@ export default function AdminNetworkExplorer({ everyone, adminUser }) {
                 {getRoleLabel(currentParent.role)}
               </span>
               {currentParent.hasPurchasedBooks ? (
-                <span className="text-emerald-600 text-xs font-semibold flex-shrink-0">✓ Purchased</span>
+                <span className="text-emerald-600 text-xs font-semibold flex-shrink-0">✓ Helped</span>
               ) : (
                 <span className="text-amber-600 text-xs font-semibold flex-shrink-0">Pending</span>
               )}
@@ -478,7 +478,9 @@ function MemberCard({ member, recruitCount, onClick }) {
           <div className="min-w-0">
             <p className="font-semibold text-gray-900 text-sm truncate">{member.name}</p>
             <p className="text-xs text-gray-400 truncate">{member.email}</p>
+            <p className="text-xs text-gray-400 truncate">{member.contactNumber}</p>
             {member.regNo && <p className="text-xs text-gray-400">Reg No: {member.regNo}</p>}
+            
           </div>
         </div>
         <svg className="w-4 h-4 text-gray-300 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -491,12 +493,15 @@ function MemberCard({ member, recruitCount, onClick }) {
           {getRoleLabel(member.role)}
         </span>
         {member.hasPurchasedBooks ? (
-          <span className="text-emerald-600 text-[10px] font-semibold">✓ Purchased</span>
+          <span className="text-emerald-600 text-[10px] font-semibold">✓ Helped</span>
         ) : (
           <span className="text-amber-600 text-[10px] font-semibold">Pending</span>
         )}
         <span className="text-[10px] text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">
           {recruitCount} recruit{recruitCount === 1 ? '' : 's'}
+        </span>
+        <span className="text-[10px] text-white bg-gray-400 rounded-full px-2 py-0.5">
+          {member.totalBooksThisYear}/202
         </span>
       </div>
     </button>

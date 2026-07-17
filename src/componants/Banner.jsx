@@ -35,7 +35,7 @@ export default function Banner() {
 
       <div className="relative max-w-5xl mx-auto px-4 py-25">
         <h1 className="font-heading text-3xl md:text-5xl font-bold">NIP (National Integration Programme)</h1>
-        <p className="font-heading text-xl md:text-2xl mt-4">Bharatiya Samata Hindi Prachar Parishad</p>
+        <p className="font-heading text-xl md:text-2xl mt-4">Samata Hindi Prachar Vibhag</p>
         <div className="w-24 h-0.5 bg-[#F4882A] mx-auto mt-6" />
       </div>
     </section>

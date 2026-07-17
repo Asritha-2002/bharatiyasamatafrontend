@@ -20,7 +20,6 @@ export default function Header() {
     { label: "Book Donation", href: "#books" },
     { label: "How Do I Help", href: "#help" },
     { label: "About", href: "#about" },
-    { label: "Contact", href: "#contact" },
   ];
 
   return (
@@ -54,7 +53,6 @@ export default function Header() {
               {l.label}
             </a>
           ))}
-
           <a
             href="https://rzp.io/l/Freebooksdonation"
             target="_blank"
@@ -66,6 +64,14 @@ export default function Header() {
           <Link to='/view-blogs'
           className="text-sm font-semibold text-[#344256] hover:text-accent transition-colors"
           >Blogs</Link>
+          
+          <a
+              key="#contact"
+              href="#contact"
+              className="text-sm font-semibold text-[#344256] hover:text-accent transition-colors"
+            >
+              Contact
+            </a>
 
           {/* Login / Dashboard link — shown before Donate */}
           <Link

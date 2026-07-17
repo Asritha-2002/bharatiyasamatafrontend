@@ -2,7 +2,7 @@ export default function AnnualPurchaseBanner({ hasPurchasedBooks, lastPurchaseYe
   const currentYear = new Date().getFullYear();
   const purchasedThisYear = lastPurchaseYear === currentYear;
 
-  const TOTAL_REQUIRED = 200;
+  const TOTAL_REQUIRED = 202;
   const booksPurchasedSoFar = purchasedThisYear ? (totalBooksThisYear || 0) : 0;
   const booksRemaining = Math.max(TOTAL_REQUIRED - booksPurchasedSoFar, 0);
   const progressPercent = Math.min(Math.round((booksPurchasedSoFar / TOTAL_REQUIRED) * 100), 100);
@@ -20,10 +20,10 @@ export default function AnnualPurchaseBanner({ hasPurchasedBooks, lastPurchaseYe
             Annual book requirement — {currentYear}
           </p>
           <p className="text-red-700 text-sm mt-0.5">
-            Every member is expected to purchase <strong>200 books</strong> per calendar year.
+            Every member is expected to help <strong>202 books</strong> per calendar year.
             {booksPurchasedSoFar > 0
-              ? ` You've purchased ${booksPurchasedSoFar} so far — ${booksRemaining} remaining.`
-              : ` You haven't purchased any books yet this year — ${booksRemaining} remaining.`}
+              ? ` You've helped ${booksPurchasedSoFar} books so far — ${booksRemaining} remaining.`
+              : ` You haven't helped any books yet this year — ${booksRemaining} remaining.`}
           </p>
 
           <div className="mt-3">

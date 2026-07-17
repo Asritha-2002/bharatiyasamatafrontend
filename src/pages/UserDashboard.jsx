@@ -16,7 +16,7 @@ import MyPayoutSchedule from '../componants/MyPayoutSchedule.jsx';
 
 const USER_TABS = [
   { key: 'network', label: 'My Network' },
-  { key: 'purchases', label: 'Purchase History' }
+  { key: 'purchases', label: 'Books Helped History' }
 ];
 
 const USER_HELP_POINTS = [
@@ -25,7 +25,9 @@ const USER_HELP_POINTS = [
   { title: 'Purchase History Tab', text: 'Check your book purchase records and confirm your annual purchase status here.' },
   { title: 'Groups & Batches', text: 'Recruits are automatically organized into groups of 12. A group is marked "Completed" once all 12 members have purchased their books.' },
   { title: 'Expanding a Recruit', text: "Click on any recruit's row to see their own recruits (your grandkids in the network)." },
-  { title: 'Getting Promoted', text: "Your invite link becomes active once you're promoted to RO. Until then, focus on completing your book purchase." }
+  { title: 'Getting Promoted', text: "Your invite link becomes active once you're promoted to RO. Until then, focus on completing your book purchase." },
+  { title: 'Getting Promoted to SO', text: "You're promoted to State Organizer (SO) as soon as at least one of your recruits has themselves helped 2 books and become an RO" },
+  { title: 'SO Monthly Payout & Renewal', text: "As an SO, you'll receive ₹10,000 every month for up to 1 year. To renew this for another year, simply repeat the cycle: help 2 books to become an RO again, recruit a group of members, and have at least one of them also help 2 books and become an RO." }
 ];
 
 // How long a request can run before we tell the person it's slow (ms).
@@ -421,6 +423,7 @@ function BatchGroup({ batch }) {
 function RecruitRow({ child }) {
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3">
+      {/* Child (e.g. Narendra) */}
       <div className="flex items-center gap-3 min-w-0">
         <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 text-sm font-bold flex items-center justify-center flex-shrink-0">
           {getInitials(child.name)}
@@ -433,16 +436,35 @@ function RecruitRow({ child }) {
 
       <p className="text-xs text-gray-400 truncate">{child.contactNumber}</p>
 
-      <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-gray-100">
+      <div className="flex flex-wrap items-center gap-1.5">
         <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${ROLE_STYLES[child.role]}`}>{child.role}</span>
         {child.hasPurchasedBooks ? (
-          <span className="text-emerald-600 text-xs font-semibold">✓ Purchased</span>
+          <span className="text-emerald-600 text-xs font-semibold">✓ Helped</span>
         ) : (
           <span className="text-amber-600 text-xs font-semibold">Pending</span>
         )}
-        <span className="text-xs text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">
+      </div>
+
+      {/* Grandkids -- who Narendra himself recruited */}
+      <div className="pt-2 border-t border-gray-100">
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
           {child.grandkids.length} recruit{child.grandkids.length === 1 ? '' : 's'}
-        </span>
+        </p>
+
+        {child.grandkids.length === 0 ? (
+          <p className="text-xs text-gray-300 italic">No recruits yet</p>
+        ) : (
+          <div className="space-y-1.5">
+            {child.grandkids.map((g) => (
+              <div key={g._id} className="flex items-center justify-between gap-2 bg-gray-50 rounded-lg px-2.5 py-1.5">
+                <span className="text-xs font-medium text-gray-700 truncate">{g.name}</span>
+                <span className="text-[10px] font-semibold text-gray-400 bg-white border border-gray-200 rounded-full px-2 py-0.5 flex-shrink-0">
+                  {g.recruitCount || 0} recruit{g.recruitCount === 1 ? '' : 's'}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
