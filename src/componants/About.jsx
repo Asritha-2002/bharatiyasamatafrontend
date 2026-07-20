@@ -1,3 +1,4 @@
+import aboutimg from "../assets/image.png"
 export default function About() {
   return (
     <section id="about" className="bg-[#344256] text-white py-16">
@@ -30,7 +31,7 @@ export default function About() {
         </div>
         <div>
           <img
-            src="https://bharatiyasamata.com/wp-content/uploads/2022/06/2-768x740.jpg"
+            src={aboutimg}
             alt="Bharatiya Samata Hindi Prachar Parishad"
             className="w-full rounded shadow-lg"
           />

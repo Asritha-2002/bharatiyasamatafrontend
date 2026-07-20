@@ -31,6 +31,12 @@ import ManageKyc from './componants/ManageKyc.jsx';
 import ManagePayouts from './componants/ManagePayouts.jsx';
 
 
+import TermsAndConditions from './pages/TermsAndConditions';
+import RefundPolicy from './pages/RefundPolicy';
+import CancellationPolicy from './pages/CancellationPolicy';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+
+
 // The public homepage — all your marketing sections, in one place
 function HomePage() {
   return (
@@ -67,6 +73,10 @@ function App() {
           <Route path="/blogs/:sku" element={<BlogDetail />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/kyc" element={<Kyc />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+<Route path="/refund-policy" element={<RefundPolicy />} />
+<Route path="/cancellation-policy" element={<CancellationPolicy />} />
+<Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
           <Route
             path="/dashboard"

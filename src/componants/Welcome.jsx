@@ -1,3 +1,4 @@
+import welcomeimg from "../assets/welcome.png"
 export default function Welcome() {
   const currentYearSuffix = new Date().getFullYear().toString().slice(-2);
   return (
@@ -5,7 +6,7 @@ export default function Welcome() {
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <div className="order-2 md:order-1">
           <img
-            src="https://bharatiyasamata.com/wp-content/uploads/2022/06/pic-obd.jpg"
+            src={welcomeimg}
             alt="One Book Donation"
             className="w-full max-w-sm mx-auto rounded shadow-lg"
           />

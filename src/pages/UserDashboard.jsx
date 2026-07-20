@@ -13,6 +13,7 @@ import { groupIntoBatches } from '../utils/batchHelpers.js';
 import { getRoleLabel } from '../utils/roleLabels.js';
 import { getMyKyc } from '../api/kyc.js';
 import MyPayoutSchedule from '../componants/MyPayoutSchedule.jsx';
+import HelpBooksCard from '../componants/HelpBooksCard.jsx';
 
 const USER_TABS = [
   { key: 'network', label: 'My Network' },
@@ -240,7 +241,7 @@ export default function UserDashboard() {
                     <p className="text-sm text-gray-500">{data.me.email}</p>
                   </div>
                 </div>
-                <span className={`text-xs font-bold px-3 py-1 rounded-full border ${ROLE_STYLES[data.me.role]}`}>
+                <span className={`text-md font-bold px-3 py-1 rounded-full border ${ROLE_STYLES[data.me.role]}`}>
                   {getRoleLabel(data.me.role)}
                 </span>
               </div>
@@ -275,6 +276,7 @@ export default function UserDashboard() {
 
             {activeTab === 'network' && (
               <div className="space-y-6">
+                 <HelpBooksCard hasPurchasedBooks={data.me.hasPurchasedBooks} />
                 <div>
                   <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-2">
                     <span className="w-4 h-4 rounded-full bg-gray-300 flex-shrink-0" /> Your Parent
