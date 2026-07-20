@@ -127,8 +127,8 @@ export default function PrivacyPolicy() {
             <p>
               If you have any questions about this Privacy Policy or how your data is handled,
               please contact us at{' '}
-              <a href="mailto:support@yourcompany.com" className="text-[#F4882A] font-semibold hover:underline">
-                support@yourcompany.com
+              <a href="mailto:bharatiyasamata@gmail.com" className="text-[#F4882A] font-semibold hover:underline">
+                bharatiyasamata@gmail.com
               </a>.
             </p>
           </Section>

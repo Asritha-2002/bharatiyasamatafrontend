@@ -127,15 +127,15 @@ export default function TermsAndConditions() {
           <Section title="11. Governing Law">
             <p>
               These Terms shall be governed by and construed in accordance with the laws of
-              [Your Country/State], without regard to its conflict of law provisions.
+             India, without regard to its conflict of law provisions.
             </p>
           </Section>
 
           <Section title="12. Contact Us">
             <p>
               If you have any questions about these Terms, please contact us at{' '}
-              <a href="mailto:support@yourcompany.com" className="text-[#F4882A] font-semibold hover:underline">
-                support@yourcompany.com
+              <a href="mailto:bharatiyasamata@gmail.com" className="text-[#F4882A] font-semibold hover:underline">
+                bharatiyasamata@gmail.com
               </a>.
             </p>
           </Section>

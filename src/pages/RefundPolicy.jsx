@@ -61,19 +61,19 @@ export default function RefundPolicy() {
           <Section title="3. Refund Request Process">
             <p>
               To request a refund, please contact us at{' '}
-              <a href="mailto:support@yourcompany.com" className="text-[#F4882A] font-semibold hover:underline">
-                support@yourcompany.com
+              <a href="mailto:bharatiyasamata@gmail.com" className="text-[#F4882A] font-semibold hover:underline">
+                bharatiyasamata@gmail.com
               </a>{' '}
-              within <strong>[X days]</strong> of your purchase, along with your order number and
+              within <strong>3 days</strong> of your purchase, along with your order number and
               a brief explanation of the issue. Our team will review your request and respond
-              within <strong>[X business days]</strong>.
+              within <strong>5 business days</strong>.
             </p>
           </Section>
 
           <Section title="4. Refund Method and Timeline">
             <p>
               Approved refunds will be credited back to the original payment method used at the
-              time of purchase. Please allow <strong>[5–10 business days]</strong> for the refund
+              time of purchase. Please allow <strong>5–10 business days</strong> for the refund
               to reflect in your account, depending on your bank or payment provider.
             </p>
           </Section>
@@ -103,8 +103,8 @@ export default function RefundPolicy() {
           <Section title="8. Contact Us">
             <p>
               For any questions regarding refunds, please reach out to us at{' '}
-              <a href="mailto:support@yourcompany.com" className="text-[#F4882A] font-semibold hover:underline">
-                support@yourcompany.com
+              <a href="mailto:bharatiyasamata@gmail.com" className="text-[#F4882A] font-semibold hover:underline">
+                bharatiyasamata@gmail.com
               </a>.
             </p>
           </Section>

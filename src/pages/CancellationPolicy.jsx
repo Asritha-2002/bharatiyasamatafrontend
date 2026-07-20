@@ -38,11 +38,11 @@ export default function CancellationPolicy() {
 
           <Section title="1. Order/Booking Cancellations">
             <p>
-              You may cancel your order or booking within <strong>[X hours/days]</strong> of
+              You may cancel your order or booking within <strong>3 days</strong> of
               placing it, provided that the product has not yet been shipped or the service has
               not yet commenced. To cancel, please contact us at{' '}
-              <a href="mailto:support@yourcompany.com" className="text-[#F4882A] font-semibold hover:underline">
-                support@yourcompany.com
+              <a href="mailto:bharatiyasamata@gmail.com" className="text-[#F4882A] font-semibold hover:underline">
+                bharatiyasamata@gmail.com
               </a>{' '}
               with your order details.
             </p>
@@ -52,15 +52,6 @@ export default function CancellationPolicy() {
             <p>
               Once an order has been shipped or a service has begun, cancellation may no longer
               be possible. In such cases, our standard Refund Policy will apply instead.
-            </p>
-          </Section>
-
-          <Section title="3. Subscription Cancellations">
-            <p>
-              If you have an active subscription with us, you may cancel it at any time from your
-              account settings or by contacting our support team. Cancellation will take effect
-              at the end of the current billing cycle, and you will not be charged for
-              subsequent cycles.
             </p>
           </Section>
 
@@ -83,11 +74,11 @@ export default function CancellationPolicy() {
           <Section title="6. How to Request a Cancellation">
             <p>
               To request a cancellation, please email us at{' '}
-              <a href="mailto:support@yourcompany.com" className="text-[#F4882A] font-semibold hover:underline">
-                support@yourcompany.com
+              <a href="mailto:bharatiyasamata@gmail.com" className="text-[#F4882A] font-semibold hover:underline">
+                bharatiyasamata@gmail.com
               </a>{' '}
               with your order/booking number. We aim to process cancellation requests within
-              <strong> [X business days]</strong>.
+              <strong> 7 business days</strong>.
             </p>
           </Section>
 
@@ -101,8 +92,8 @@ export default function CancellationPolicy() {
           <Section title="8. Contact Us">
             <p>
               For any cancellation-related queries, reach out to us at{' '}
-              <a href="mailto:support@yourcompany.com" className="text-[#F4882A] font-semibold hover:underline">
-                support@yourcompany.com
+              <a href="mailto:bharatiyasamata@gmail.com" className="text-[#F4882A] font-semibold hover:underline">
+                bharatiyasamata@gmail.com
               </a>.
             </p>
           </Section>
