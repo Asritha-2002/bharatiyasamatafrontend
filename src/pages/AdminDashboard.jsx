@@ -19,7 +19,7 @@ import ManagePayouts from '../componants/ManagePayouts.jsx';
 const SIDEBAR_ITEMS = [
   { key: 'network', label: 'Network', path: '/admin/network', implemented: true },
   { key: 'hierarchy', label: 'Hierarchy Lookup', path: '/admin/hierarchy', implemented: true }, // NEW
-  { key: 'revenue', label: 'Total Helped Books Money', path: '/admin/revenue', implemented: true },
+  { key: 'helped', label: 'Total Helped Books Money', path: '/admin/revenue', implemented: true },
   { key: 'blogs', label: 'Manage Blogs', path: '/admin/blogs', implemented: true },
   { key: 'banner', label: 'Manage Banner Image', path: '/admin/banner', implemented: true },
   { key: 'gallery', label: 'Manage Gallery', path: '/admin/gallery', implemented: true },
@@ -30,10 +30,10 @@ const SIDEBAR_ITEMS = [
 
 
 const ADMIN_HELP_POINTS = [
-  { title: 'Referral Code', text: 'Share your admin referral code to onboard new ROs directly under you.' },
+  { title: 'Recruitment Code', text: 'Share your admin recruitment code to onboard new ROs directly under you.' },
   { title: 'Network', text: 'View and manage every member across the entire network from one table.' },
-  { title: 'Revenue', text: 'Track total books sold and revenue generated across all members.' },
-  { title: 'Managing Users', text: 'Use the network table to update roles or purchase status for any member.' },
+  { title: 'Helped', text: 'Track total books sold and helped generated across all members.' },
+  { title: 'Managing Users', text: 'Use the network table to update roles or books helped status for any member.' },
 ];
 
 // How long a request can run before we tell the person it's slow (ms).
@@ -41,7 +41,7 @@ const SLOW_REQUEST_THRESHOLD = 8000;
 
 function resolveActiveKey(pathname) {
   const path = pathname.toLowerCase();
-  if (path.includes('revenue')) return 'revenue';
+  if (path.includes('revenue')) return 'helped';
   if (path.includes('hierarchy')) return 'hierarchy';
   if (path.includes('blog')) return 'blogs';
   if (path.includes('banner')) return 'banner';
@@ -206,7 +206,7 @@ export default function AdminDashboard() {
                   <>
                     <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6 shadow-sm">
                       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                        Your Referral Code (share this to add ROs)
+                        Your Recruitment Code (share this to add ROs)
                       </p>
                       <div className="flex flex-wrap items-center gap-3">
                         <code className="bg-gray-100 px-3 py-1.5 rounded text-sm font-mono">{data.me.referralCode}</code>

@@ -14,13 +14,13 @@ import { useDashboardData } from '../hooks/useDashboardData.js';
 
 const USER_TABS = [
   { key: 'network', label: 'My Network' },
-  { key: 'purchases', label: 'Purchase History' }
+  { key: 'purchases', label: 'Books Helped History' }
 ];
 
 const USER_HELP_POINTS = [
-  { title: 'Your Referral Code', text: "Share your unique referral code or invite link with new people you want to bring into your network." },
+  { title: 'Your Recruitment Code', text: "Share your unique recruitment code or invite link with new people you want to bring into your network." },
   { title: 'My Network Tab', text: "See your parent (who recruited you) and everyone you've personally recruited, grouped into batches of 12." },
-  { title: 'Purchase History Tab', text: 'Check your book purchase records and confirm your annual purchase status here.' },
+  { title: 'Books Helped History Tab', text: 'Check your book helped records and confirm your annual books helped status here.' },
   { title: 'Groups & Batches', text: 'Recruits are automatically organized into groups of 12. A group is marked "Completed" once all 12 members have purchased their books.' },
   { title: 'Expanding a Recruit', text: "Click on any recruit's row to see their own recruits (your grandkids in the network)." },
   { title: 'Getting Promoted', text: "Your invite link becomes active once you're promoted to RO. Until then, focus on completing your book purchase." }
@@ -127,12 +127,12 @@ export default function UserDashboard() {
 
               {!data.me.hasPurchasedBooks && data.me.role === 'VOLUNTEER' && (
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-lg px-4 py-3 mb-4">
-                  You need to purchase your 2 books before you can start recruiting.
+                  You need to help 2 books before you can start recruiting.
                 </div>
               )}
 
               <div className="border-t border-gray-100 pt-4">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Your Referral Code</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Your Recruitment Code</p>
                 <div className="flex flex-wrap items-center gap-2">
                   <code className="bg-gray-100 px-3 py-1.5 rounded text-sm font-mono">{data.me.referralCode}</code>
                   <button
@@ -177,7 +177,7 @@ export default function UserDashboard() {
                   </h2>
 
                   {childBatches.length === 0 ? (
-                    <EmptyRow text="No children yet — share your referral link to start recruiting." />
+                    <EmptyRow text="No children yet — share your recruitment link to start recruiting." />
                   ) : (
                     <div className="space-y-5">
                       {childBatches.map((batch) => (
@@ -282,7 +282,7 @@ function RecruitRow({ child, isOpen, onToggle }) {
         <div className="flex items-center gap-3 flex-shrink-0">
           <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${ROLE_STYLES[child.role]}`}>{child.role}</span>
           {child.hasPurchasedBooks ? (
-            <span className="text-emerald-600 text-xs font-semibold">✓ Purchased</span>
+            <span className="text-emerald-600 text-xs font-semibold">✓ Helped</span>
           ) : (
             <span className="text-amber-600 text-xs font-semibold">Pending</span>
           )}

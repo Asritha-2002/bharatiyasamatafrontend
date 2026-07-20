@@ -54,7 +54,7 @@ export default function Register() {
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Join Bharatiya Samata</h1>
         <p className="text-sm text-gray-500 mb-6">
           {hasReferral
-            ? `Registering with referral code: ${refFromUrl}`
+            ? `Registering with recruitment code: ${refFromUrl}`
             : "You'll be registered under Bharatiya Samata's main network."}
         </p>
 
@@ -120,7 +120,7 @@ export default function Register() {
               here for the person to second-guess or try to edit. */}
           {hasReferral && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Referral Code</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Recruitment Code</label>
               <input
                 type="text"
                 name="referralCode"

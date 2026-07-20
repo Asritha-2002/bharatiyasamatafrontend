@@ -19,7 +19,7 @@ export default function PurchaseHistoryTab({ myRegNo, parentRegNo, hasPurchasedB
         const res = await api.get('/purchase/my-history');
         setHistory(res.data);
       } catch (err) {
-        setError('Could not load your purchase history.');
+        setError('Could not load your helped books history.');
       } finally {
         setLoading(false);
       }
@@ -69,7 +69,7 @@ export default function PurchaseHistoryTab({ myRegNo, parentRegNo, hasPurchasedB
             <div style="font-size:22px; font-weight:900; color:#7c2d12; letter-spacing:-0.5px;">
               Bharatiya Samata Hindi Prachar Parishad
             </div>
-            <div style="font-size:11px; color:#888; margin-top:4px;">Book Purchase Receipt</div>
+            <div style="font-size:11px; color:#888; margin-top:4px;">Book Helped Receipt</div>
           </div>
           <div style="text-align:right;">
             <div style="font-size:20px; font-weight:800; color:#7c2d12;">INVOICE</div>
@@ -227,7 +227,7 @@ export default function PurchaseHistoryTab({ myRegNo, parentRegNo, hasPurchasedB
       {/* History */}
       <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
-          <h3 className="font-bold text-gray-900 text-sm">Purchase History</h3>
+          <h3 className="font-bold text-gray-900 text-sm">Helped Books History</h3>
         </div>
 
         {loading ? (
@@ -236,7 +236,7 @@ export default function PurchaseHistoryTab({ myRegNo, parentRegNo, hasPurchasedB
           <div className="px-6 py-10 text-center text-sm text-red-500">{error}</div>
         ) : history.length === 0 ? (
           <div className="px-6 py-10 text-center">
-            <p className="text-sm text-gray-400 italic">No purchases recorded yet.</p>
+            <p className="text-sm text-gray-400 italic">No books helped recorded yet.</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-100">

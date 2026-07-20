@@ -7,7 +7,7 @@ const ICONS = {
       <path d="M12 7.5v4M12 11.5 6.8 17M12 11.5 17.2 17" />
     </svg>
   ),
-  revenue: (
+  helped: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
       <path d="M3 20h18M6 20V10M12 20V4M18 20v-7" />
     </svg>

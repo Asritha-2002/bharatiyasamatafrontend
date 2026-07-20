@@ -20,12 +20,12 @@ const USER_TABS = [
 ];
 
 const USER_HELP_POINTS = [
-  { title: 'Your Referral Code', text: "Share your unique referral code or invite link with new people you want to bring into your network." },
+  { title: 'Your Recruitment Code', text: "Share your unique recruitment code or invite link with new people you want to bring into your network." },
   { title: 'My Network Tab', text: "See your parent (who recruited you) and everyone you've personally recruited, grouped into batches of 12." },
-  { title: 'Purchase History Tab', text: 'Check your book purchase records and confirm your annual purchase status here.' },
-  { title: 'Groups & Batches', text: 'Recruits are automatically organized into groups of 12. A group is marked "Completed" once all 12 members have purchased their books.' },
+  { title: 'Books Helped History Tab', text: 'Check your book helped records and confirm your annual books helped status here.' },
+  { title: 'Groups & Batches', text: 'Recruits are automatically organized into groups of 12. A group is marked "Completed" once all 12 members have helped their books.' },
   { title: 'Expanding a Recruit', text: "Click on any recruit's row to see their own recruits (your grandkids in the network)." },
-  { title: 'Getting Promoted', text: "Your invite link becomes active once you're promoted to RO. Until then, focus on completing your book purchase." },
+  { title: 'Getting Promoted', text: "Your invite link becomes active once you're promoted to RO. Until then, focus on completing your books helping." },
   { title: 'Getting Promoted to SO', text: "You're promoted to State Organizer (SO) as soon as at least one of your recruits has themselves helped 2 books and become an RO" },
   { title: 'SO Monthly Payout & Renewal', text: "As an SO, you'll receive ₹10,000 every month for up to 1 year. To renew this for another year, simply repeat the cycle: help 2 books to become an RO again, recruit a group of members, and have at least one of them also help 2 books and become an RO." }
 ];
@@ -247,12 +247,12 @@ export default function UserDashboard() {
 
               {!data.me.hasPurchasedBooks && data.me.role === 'VOLUNTEER' && (
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-lg px-4 py-3 mb-4">
-                  You need to purchase your 2 books before you can start recruiting.
+                  You need to help 2 books before you can start recruiting.
                 </div>
               )}
 
               <div className="border-t border-gray-100 pt-4">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Your Referral Code</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Your Recruitment Code</p>
                 <div className="flex flex-wrap items-center gap-2">
                   <code className="bg-gray-100 px-3 py-1.5 rounded text-sm font-mono">{data.me.referralCode}</code>
                   <button
@@ -297,7 +297,7 @@ export default function UserDashboard() {
                   </h2>
 
                   {childBatches.length === 0 ? (
-                    <EmptyRow text="No children yet — share your referral link to start recruiting." />
+                    <EmptyRow text="No children yet — share your recruitment link to start recruiting." />
                   ) : (
                     <div className="space-y-5">
                       {childBatches.map((batch) => (

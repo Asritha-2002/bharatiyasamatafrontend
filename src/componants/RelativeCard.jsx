@@ -28,9 +28,9 @@ export default function RelativeCard({ person, showProgress, batchInfo }) {
       {showProgress && (
         <p className="text-xs mt-2 font-medium">
           {person.hasPurchasedBooks ? (
-            <span className="text-green-600">✓ Books purchased</span>
+            <span className="text-green-600">✓ Books Helped</span>
           ) : (
-            <span className="text-amber-600">Pending purchase</span>
+            <span className="text-amber-600">Pending books helping</span>
           )}
         </p>
       )}

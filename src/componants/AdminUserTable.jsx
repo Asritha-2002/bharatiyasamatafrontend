@@ -59,7 +59,7 @@ export default function AdminUserTable({ users, onUpdated }) {
       await api.patch(`/admin/users/${userId}/confirm-purchase`);
       onUpdated();
     } catch (err) {
-      alert('Failed to update purchase status.');
+      alert('Failed to update helped books status.');
     } finally {
       setUpdatingId(null);
     }
@@ -91,7 +91,7 @@ export default function AdminUserTable({ users, onUpdated }) {
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Search by name, email, referral code, or recruiter..."
+          placeholder="Search by name, email, recruitment code, or recruiter..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full sm:w-80 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
@@ -107,7 +107,7 @@ export default function AdminUserTable({ users, onUpdated }) {
                 <th className="text-left px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Invited By</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Level</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Role</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Referral Code</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Recruitment Code</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Purchase</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Groups</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Action</th>

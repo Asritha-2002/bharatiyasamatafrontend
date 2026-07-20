@@ -31,7 +31,7 @@ export async function downloadInvoicePDF(purchase) {
         <div style="font-size:22px; font-weight:900; color:#7c2d12; letter-spacing:-0.5px;">
           Bharatiya Samata Hindi Prachar Parishad
         </div>
-        <div style="font-size:11px; color:#888; margin-top:4px;">Book Purchase Receipt</div>
+        <div style="font-size:11px; color:#888; margin-top:4px;">Book Helped Receipt</div>
       </div>
       <div style="text-align:right;">
         <div style="font-size:20px; font-weight:800; color:#7c2d12;">INVOICE</div>
@@ -46,7 +46,7 @@ export async function downloadInvoicePDF(purchase) {
     <div style="display:flex; justify-content:space-between; margin-bottom:28px; gap:24px;">
       <div style="flex:1;">
         <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#888; margin-bottom:8px;">
-          Purchased By
+          Books Helped By
         </div>
         <div style="font-size:13px; font-weight:700; color:#7c2d12;">${purchaserName}</div>
         <div style="font-size:12px; color:#555; margin-top:4px;">Registration ID: ${regNo}</div>

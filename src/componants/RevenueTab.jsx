@@ -30,7 +30,7 @@ export default function RevenueTab() {
       setTransactions(res.data.transactions || []);
       setError('');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load revenue data');
+      setError(err.response?.data?.message || 'Failed to load helped data');
     } finally {
       setLoading(false);
     }
@@ -66,7 +66,7 @@ export default function RevenueTab() {
   }, [transactions, searchQuery]);
 
   if (loading || !summary) {
-    return <p className="text-sm text-gray-500">Loading revenue data...</p>;
+    return <p className="text-sm text-gray-500">Loading helped data...</p>;
   }
 
   if (error) {
@@ -82,7 +82,7 @@ export default function RevenueTab() {
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard label="Total Revenue" value={`₹${summary.totalRevenue.toLocaleString()}`} />
+        <StatCard label="Total Helped" value={`₹${summary.totalRevenue.toLocaleString()}`} />
         <StatCard label="Books Sold" value={summary.booksSold.toLocaleString()} />
         <StatCard label="Transactions" value={summary.transactions.toLocaleString()} />
         {/* <StatCard label="Avg. Order Value" value={`₹${summary.avgOrderValue.toLocaleString()}`} /> */}
