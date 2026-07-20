@@ -117,7 +117,7 @@ export default function RevenueTab() {
                       <th className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">#</th>
                       <th className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Contact</th>
                       <th className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Books</th>
-                      <th className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Amount</th>
+                      <th className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Funding</th>
                       <th className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">Date</th>
                       <th className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide text-right">Invoice</th>
                     </tr>
@@ -172,7 +172,7 @@ export default function RevenueTab() {
                       <p className="font-semibold text-gray-900">{t.numberOfFreeBooks}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Amount</p>
+                      <p className="text-gray-400">Funding</p>
                       <p className="font-semibold text-gray-900">₹{t.amount}</p>
                     </div>
                   </div>

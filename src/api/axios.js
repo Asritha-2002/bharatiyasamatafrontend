@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://bharatiyasamata-theta.vercel.app/api'
+  baseURL: 'http://localhost:5000/api'
 });
 //https://bharatiyasamata-theta.vercel.app
 api.interceptors.request.use((config) => {

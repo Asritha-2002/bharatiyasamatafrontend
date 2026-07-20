@@ -166,7 +166,7 @@ export default function ManageKyc() {
               <DetailRow label="Bank Account Number" value={selected.bankAccountNumber} />
               <DetailRow label="IFSC Code" value={selected.ifscCode} />
               <div>
-                <p className="text-xs font-semibold text-gray-500 mb-1">Cancelled Cheque</p>
+                <p className="text-xs font-semibold text-gray-500 mb-1">Passbook First Page / Cancelled Cheque</p>
                 <a href={selected.chequeImageUrl} target="_blank" rel="noopener noreferrer">
                   <img src={selected.chequeImageUrl} alt="Cheque" className="w-full max-h-48 object-contain border border-gray-200 rounded-lg" />
                 </a>

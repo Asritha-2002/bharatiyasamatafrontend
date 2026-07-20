@@ -340,7 +340,7 @@ const [paymentError, setPaymentError] = useState('');
             <span className="font-medium text-gray-900">₹{PRICE_PER_BOOK}</span>
           </div>
           <div className="border-t border-gray-100 pt-3 flex justify-between items-center">
-            <span className="text-sm font-semibold text-gray-800">Total amount</span>
+            <span className="text-sm font-semibold text-gray-800">Total funding</span>
             <span className="text-xl font-bold text-gray-900">₹{totalAmount}</span>
           </div>
         </div>
