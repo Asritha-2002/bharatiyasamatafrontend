@@ -20,16 +20,23 @@ const USER_TABS = [
   { key: 'purchases', label: 'Books Helped History' }
 ];
 
-const USER_HELP_POINTS = [
-  { title: 'Your Recruitment Code', text: "Share your unique recruitment code or invite link with new people you want to bring into your network." },
-  { title: 'My Network Tab', text: "See your parent (who recruited you) and everyone you've personally recruited, grouped into batches of 12." },
-  { title: 'Books Helped History Tab', text: 'Check your book helped records and confirm your annual books helped status here.' },
-  { title: 'Groups & Batches', text: 'Recruits are automatically organized into groups of 12. A group is marked "Completed" once all 12 members have helped their books.' },
-  { title: 'Expanding a Recruit', text: "Click on any recruit's row to see their own recruits (your grandkids in the network)." },
-  { title: 'Getting Promoted', text: "Your invite link becomes active once you're promoted to RO. Until then, focus on completing your books helping." },
-  { title: 'Getting Promoted to SO', text: "You're promoted to State Organizer (SO) as soon as at least one of your recruits has themselves helped 2 books and become an RO" },
-  { title: 'SO Monthly Payout & Renewal', text: "As an SO, you'll receive ₹10,000 every month for up to 1 year. To renew this for another year, simply repeat the cycle: help 2 books to become an RO again, recruit a group of members, and have at least one of them also help 2 books and become an RO." }
-];
+function buildUserHelpPoints(settings) {
+  const batchSize = settings?.soRequiredBatchSize ?? 12;
+  const requiredRoCount = settings?.soRequiredRoCount ?? 1;
+  const payoutAmount = settings?.soPayoutAmountPerMonth ?? 10000;
+  const payoutMonths = settings?.soPayoutDurationMonths ?? 12;
+
+  return [
+    { title: 'Your Recruitment Code', text: "Share your unique recruitment code or invite link with new people you want to bring into your network." },
+    { title: 'My Network Tab', text: "See your parent (who recruited you) and everyone you've personally recruited, grouped into batches of " + batchSize + "." },
+    { title: 'Books Helped History Tab', text: 'Check your book helped records and confirm your annual books helped status here.' },
+    { title: 'Groups & Batches', text: `Recruits are automatically organized into groups of ${batchSize}. A group is marked "Completed" once all ${batchSize} members have helped their books.` },
+    { title: 'Expanding a Recruit', text: "Click on any recruit's row to see their own recruits (your grandkids in the network)." },
+    { title: 'Getting Promoted', text: "Your invite link becomes active once you're promoted to RO. Until then, focus on completing your books helping." },
+    { title: 'Getting Promoted to SO', text: `You're promoted to State Organizer (SO) as soon as at least ${requiredRoCount} of your recruits ${requiredRoCount === 1 ? 'has' : 'have'} themselves helped 2 books and become ${requiredRoCount === 1 ? 'an RO' : 'ROs'}.` },
+    { title: 'SO Monthly Payout & Renewal', text: `As an SO, you'll receive ₹${payoutAmount.toLocaleString('en-IN')} every month for up to ${payoutMonths} month${payoutMonths === 1 ? '' : 's'}. To renew this for another cycle, simply repeat the process: help 2 books to become an RO again, recruit a group of members, and have at least ${requiredRoCount} of them also help 2 books and become ${requiredRoCount === 1 ? 'an RO' : 'ROs'}.` },
+  ];
+}
 
 // How long a request can run before we tell the person it's slow (ms).
 const SLOW_REQUEST_THRESHOLD = 8000;
@@ -76,6 +83,15 @@ export default function UserDashboard() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [slowConnection, setSlowConnection] = useState(false);
   const slowTimerRef = useRef(null);
+
+
+  const [settings, setSettings] = useState(null);
+
+useEffect(() => {
+  api.get('/settings')
+    .then((res) => setSettings(res.data.settings))
+    .catch(() => setSettings(null)); // non-critical -- banner just falls back to default if this fails
+}, []);
 
   // KYC status is only relevant for SO members, fetched separately once we
   // know the role -- avoids touching the existing /dashboard/me response shape.
@@ -191,6 +207,8 @@ export default function UserDashboard() {
     return base;
   }, [showPayoutsTab]);
 
+   const userHelpPoints = useMemo(() => buildUserHelpPoints(settings), [settings]);
+
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="max-w-6xl mx-auto">
@@ -228,6 +246,7 @@ export default function UserDashboard() {
               hasPurchasedBooks={data.me.hasPurchasedBooks}
               lastPurchaseYear={data.me.lastPurchaseYear}
               totalBooksThisYear={data.me.totalBooksThisYear}
+              annualBookTarget={settings?.annualBookTarget}
             />
 
             <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
@@ -303,8 +322,8 @@ export default function UserDashboard() {
                   ) : (
                     <div className="space-y-5">
                       {childBatches.map((batch) => (
-                        <BatchGroup key={batch.batchNumber} batch={batch} />
-                      ))}
+  <BatchGroup key={batch.batchNumber} batch={batch} batchSize={settings?.soRequiredBatchSize ?? 12} />
+))}
                     </div>
                   )}
                 </div>
@@ -324,7 +343,7 @@ export default function UserDashboard() {
         )}
       </div>
 
-      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} points={USER_HELP_POINTS} />
+      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} points={userHelpPoints} />
     </div>
   );
 }
@@ -395,7 +414,7 @@ function EmptyRow({ text }) {
   );
 }
 
-function BatchGroup({ batch }) {
+function BatchGroup({ batch, batchSize }) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-2">
@@ -403,12 +422,12 @@ function BatchGroup({ batch }) {
           Group {batch.batchNumber}
         </span>
         <span className="text-xs text-gray-400 font-medium">
-          {batch.completedCount}/12 completed{batch.isComplete && ' — Completed ✓'}
+          {batch.completedCount}/{batchSize} completed{batch.isComplete && ' — Completed ✓'}
         </span>
         <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden max-w-[140px]">
           <div
             className={`h-full rounded-full transition-all ${batch.isComplete ? 'bg-emerald-400' : 'bg-blue-400'}`}
-            style={{ width: `${(batch.completedCount / 12) * 100}%` }}
+            style={{ width: `${(batch.completedCount / batchSize) * 100}%` }}
           />
         </div>
       </div>
@@ -421,7 +440,6 @@ function BatchGroup({ batch }) {
     </div>
   );
 }
-
 function RecruitRow({ child }) {
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3">

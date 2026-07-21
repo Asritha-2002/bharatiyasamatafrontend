@@ -3,7 +3,7 @@ import api from '../api/axios.js';
 import { buildPaymentLink } from '../config.js';
 import { useNavigate } from 'react-router-dom';
 import HelpBooksCard from './HelpBooksCard.jsx';
-const PRICE_PER_BOOK = 60; // fallback if you ever need to show a unit price and amount/count isn't reliable
+
 
 export default function PurchaseHistoryTab({ myRegNo, parentRegNo, hasPurchasedBooks }) {
   const [history, setHistory] = useState([]);
@@ -11,21 +11,28 @@ export default function PurchaseHistoryTab({ myRegNo, parentRegNo, hasPurchasedB
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
   const [downloadingId, setDownloadingId] = useState(null);
-  const navigate = useNavigate();
+  const [pricePerBook, setPricePerBook] = useState(60); // fallback default until settings load
 
+  const navigate = useNavigate();
   useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const res = await api.get('/purchase/my-history');
-        setHistory(res.data);
-      } catch (err) {
-        setError('Could not load your helped books history.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchHistory();
-  }, []);
+  const fetchHistory = async () => {
+    try {
+      const res = await api.get('/purchase/my-history');
+      setHistory(res.data);
+    } catch (err) {
+      setError('Could not load your helped books history.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchHistory();
+}, []);
+
+useEffect(() => {
+  api.get('/settings')
+    .then((res) => setPricePerBook(res.data.settings.pricePerBook))
+    .catch(() => {}); // non-critical -- keeps the default 60 fallback if this fails
+}, []);
 
   const paymentLink = buildPaymentLink(myRegNo);
 
@@ -55,7 +62,7 @@ const downloadInvoice = async (purchase) => {
     const invoiceId = String(purchase._id).slice(-10).toUpperCase();
     const booksCount = purchase.numberOfFreeBooks || 0;
     const amount = purchase.amount || 0;
-    const pricePerBook = booksCount > 0 ? (amount / booksCount) : PRICE_PER_BOOK;
+    const pricePerBook = booksCount > 0 ? (amount / booksCount) : pricePerBook;
     const purchaserName = purchase.booksHelperName || 'Volunteer';
     const regNo = purchase.regNo || myRegNo;
     const dateStr = new Date(purchase.createdAt).toLocaleDateString('en-IN', {
@@ -66,15 +73,10 @@ const downloadInvoice = async (purchase) => {
     invoiceEl.innerHTML = `
       <!-- Header -->
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:36px;">
-        <div style="display:flex; align-items:center; gap:14px;">
-          <img src="${logoUrl}" alt="Logo" style="width:56px; height:56px; object-fit:contain; border-radius:8px;" />
-          <div>
-            <div style="font-size:22px; font-weight:900; color:#7c2d12; letter-spacing:-0.5px;">
-              Bharatiya Samata Hindi Prachar Parishad
-            </div>
-            <div style="font-size:11px; color:#888; margin-top:4px;">Book Helped Receipt</div>
-          </div>
-        </div>
+       
+          <img src="${logoUrl}" alt="Logo" style="width:100px; height:56px; object-fit:contain; border-radius:8px;" />
+         
+        
         <div style="text-align:right;">
           <div style="font-size:20px; font-weight:800; color:#7c2d12;">INVOICE</div>
           <div style="font-size:11px; color:#888; margin-top:4px;">#${invoiceId}</div>
@@ -239,13 +241,13 @@ const downloadInvoice = async (purchase) => {
         ) : (
           <div className="divide-y divide-gray-100">
             {history.map((p) => {
-              const pricePerBook = p.numberOfFreeBooks > 0 ? (p.amount / p.numberOfFreeBooks) : PRICE_PER_BOOK;
+              const perBook = p.numberOfFreeBooks > 0 ? (p.amount / p.numberOfFreeBooks) : pricePerBook;
               return (
                 <div key={p._id} className="px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div>
                     <p className="text-sm font-medium text-gray-900">
                       {p.numberOfFreeBooks} book{p.numberOfFreeBooks === 1 ? '' : 's'}
-                      <span className="text-gray-400 font-normal"> · ₹{pricePerBook.toFixed(0)} each</span>
+                      <span className="text-gray-400 font-normal"> · ₹{perBook.toFixed(0)} each</span>
                     </p>
                     <p className="text-xs text-gray-400">
                       {new Date(p.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}

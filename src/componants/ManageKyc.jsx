@@ -23,6 +23,8 @@ export default function ManageKyc() {
   const [rejectReason, setRejectReason] = useState('');
   const [processing, setProcessing] = useState(false);
   const [payoutSchedule, setPayoutSchedule] = useState(null);
+  const [payoutAmount, setPayoutAmount] = useState(10000);   // fallback until settings load
+  const [payoutMonths, setPayoutMonths] = useState(12);      // fallback until settings load
 
   const fetchPending = async () => {
     setLoading(true);
@@ -41,6 +43,16 @@ export default function ManageKyc() {
     fetchPending();
   }, []);
 
+  useEffect(() => {
+    api.get('/settings')
+      .then((res) => {
+        setPayoutAmount(res.data.settings.soPayoutAmountPerMonth);
+        setPayoutMonths(res.data.settings.soPayoutDurationMonths);
+      })
+      .catch(() => {}); // non-critical -- keeps defaults if this fails
+  }, []);
+
+
   const openDetail = (submission) => {
     setSelected(submission);
     setRejecting(false);
@@ -48,21 +60,21 @@ export default function ManageKyc() {
     setPayoutSchedule(null);
   };
 
-  const handleApprove = async () => {
-    setProcessing(true);
-    try {
-      const res = await api.patch(`/kyc/${selected._id}/approve`);
-      setSelected(null);
-      fetchPending();
-      if (res.data.payoutsCreated) {
-        alert('KYC approved. A 12-month payout schedule of ₹10,000/month has been created since this member is a State Organizer.');
-      }
-    } catch (err) {
-      alert(err.response?.data?.error || 'Failed to approve.');
-    } finally {
-      setProcessing(false);
+ const handleApprove = async () => {
+  setProcessing(true);
+  try {
+    const res = await api.patch(`/kyc/${selected._id}/approve`);
+    setSelected(null);
+    fetchPending();
+    if (res.data.payoutsCreated) {
+      alert(`KYC approved. A ${payoutMonths}-month payout schedule of ₹${payoutAmount.toLocaleString('en-IN')}/month has been created since this member is a State Organizer.`);
     }
-  };
+  } catch (err) {
+    alert(err.response?.data?.error || 'Failed to approve.');
+  } finally {
+    setProcessing(false);
+  }
+};
 
   const handleReject = async () => {
     if (!rejectReason.trim()) return;
@@ -83,8 +95,8 @@ export default function ManageKyc() {
       <div className="mb-6">
         <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-1">KYC Verification Requests</h2>
         <p className="text-xs text-gray-400">
-          Review submitted identity and bank details. State Organizers get an automatic 12-month payout schedule once approved.
-        </p>
+  Review submitted identity and bank details. State Organizers get an automatic {payoutMonths}-month payout schedule once approved.
+</p>
       </div>
 
       {loading ? (
@@ -173,10 +185,10 @@ export default function ManageKyc() {
               </div>
 
               {selected.status === 'PENDING' && selected.user?.role === 'SO' && (
-                <div className="bg-blue-50 border border-blue-200 text-blue-700 text-xs rounded-lg px-3 py-2">
-                  This member is a State Organizer — approving will auto-generate a 12-month payout schedule of ₹10,000/month.
-                </div>
-              )}
+  <div className="bg-blue-50 border border-blue-200 text-blue-700 text-xs rounded-lg px-3 py-2">
+    This member is a State Organizer — approving will auto-generate a {payoutMonths}-month payout schedule of ₹{payoutAmount.toLocaleString('en-IN')}/month.
+  </div>
+)}
 
               {selected.status === 'REJECTED' && selected.rejectionReason && (
                 <div className="bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg px-3 py-2">

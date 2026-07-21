@@ -6,7 +6,7 @@ import { OfflineBanner, DashboardIssueCard } from '../componants/ConnectionNotic
 
 // Price is per book, in your currency's smallest sensible display unit.
 // Kept as a single constant so it's easy to find and change later.
-const PRICE_PER_BOOK = 60;
+
 
 // Preset quantities the person can pick with one tap. "My wish" reveals a
 // free-entry field instead of one of these fixed numbers.
@@ -28,7 +28,12 @@ export default function Checkout() {
   // Add this state near your other useState calls
 const [processing, setProcessing] = useState(false);
 const [paymentError, setPaymentError] = useState('');
-
+const [pricePerBook, setPricePerBook] = useState(null); // null while loading
+useEffect(() => {
+  api.get('/settings')
+    .then((res) => setPricePerBook(res.data.settings.pricePerBook))
+    .catch(() => setPricePerBook(60)); // fallback so checkout still works if this call fails
+}, []);
 
 
   const [form, setForm] = useState({
@@ -107,13 +112,14 @@ const [paymentError, setPaymentError] = useState('');
     return Number(form.bookSelection) || 0;
   }, [form.bookSelection, form.customBookCount]);
 
-  const totalAmount = bookCount * PRICE_PER_BOOK;
+  const totalAmount = bookCount * (pricePerBook || 0);
 
   const isFormValid =
-    form.name.trim() &&
-    form.contactNumber.trim() &&
-    form.email.trim() &&
-    bookCount > 0;
+  form.name.trim() &&
+  form.contactNumber.trim() &&
+  form.email.trim() &&
+  bookCount > 0 &&
+  pricePerBook !== null;
 
   const handleChange = (field, value) => {
     setForm((f) => ({ ...f, [field]: value }));
@@ -336,9 +342,11 @@ console.log(orderData.keyId)
             <span className="font-medium text-gray-900">{bookCount || 0}</span>
           </div>
           <div className="flex justify-between text-sm text-gray-600 mb-3">
-            <span>Price per book</span>
-            <span className="font-medium text-gray-900">₹{PRICE_PER_BOOK}</span>
-          </div>
+  <span>Price per book</span>
+  <span className="font-medium text-gray-900">
+    {pricePerBook !== null ? `₹${pricePerBook}` : '...'}
+  </span>
+</div>
           <div className="border-t border-gray-100 pt-3 flex justify-between items-center">
             <span className="text-sm font-semibold text-gray-800">Total funding</span>
             <span className="text-xl font-bold text-gray-900">₹{totalAmount}</span>
@@ -366,10 +374,12 @@ console.log(orderData.keyId)
 </button>
 
         {!isFormValid && (
-          <p className="text-xs text-gray-400 mt-2 text-center">
-            Fill in your name, mobile, email, and choose a valid number of books to continue.
-          </p>
-        )}
+  <p className="text-xs text-gray-400 mt-2 text-center">
+    {pricePerBook === null
+      ? 'Loading pricing...'
+      : 'Fill in your name, mobile, email, and choose a valid number of books to continue.'}
+  </p>
+)}
       </div>
     </div>
   );

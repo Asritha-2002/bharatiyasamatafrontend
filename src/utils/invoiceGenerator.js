@@ -3,7 +3,7 @@ const PRICE_PER_BOOK = 60; // fallback if amount/count isn't reliable
 // Generates and downloads a PDF invoice for a single purchase/payment record.
 // `purchase` needs: _id, numberOfFreeBooks, amount, booksHelperName, regNo,
 // createdAt, status, razorpayPaymentId.
-export async function downloadInvoicePDF(purchase) {
+export async function downloadInvoicePDF(purchase, fallbackPricePerBook = 60) {
   const { default: jsPDF } = await import('jspdf');
   const { default: html2canvas } = await import('html2canvas');
 
@@ -17,22 +17,18 @@ export async function downloadInvoicePDF(purchase) {
   const invoiceId = String(purchase._id).slice(-10).toUpperCase();
   const booksCount = purchase.numberOfFreeBooks || 0;
   const amount = purchase.amount || 0;
-  const pricePerBook = booksCount > 0 ? (amount / booksCount) : PRICE_PER_BOOK;
+  const pricePerBook = booksCount > 0 ? (amount / booksCount) : fallbackPricePerBook;
   const purchaserName = purchase.booksHelperName || 'Volunteer';
   const regNo = purchase.regNo || '—';
   const dateStr = new Date(purchase.createdAt).toLocaleDateString('en-IN', {
     day: '2-digit', month: 'short', year: 'numeric'
   });
+   const logoUrl = `${window.location.origin}/image.png`;
 
   invoiceEl.innerHTML = `
     <!-- Header -->
     <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:36px;">
-      <div>
-        <div style="font-size:22px; font-weight:900; color:#7c2d12; letter-spacing:-0.5px;">
-          Bharatiya Samata Hindi Prachar Parishad
-        </div>
-        <div style="font-size:11px; color:#888; margin-top:4px;">Book Helped Receipt</div>
-      </div>
+      <img src="${logoUrl}" alt="Logo" style="width:100px; height:56px; object-fit:contain; border-radius:8px;" />
       <div style="text-align:right;">
         <div style="font-size:20px; font-weight:800; color:#7c2d12;">INVOICE</div>
         <div style="font-size:11px; color:#888; margin-top:4px;">#${invoiceId}</div>

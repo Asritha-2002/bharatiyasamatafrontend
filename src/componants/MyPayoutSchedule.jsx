@@ -24,16 +24,22 @@ export default function MyPayoutSchedule() {
   if (payouts.length === 0) return null;
 
   const paidCount = payouts.filter((p) => p.status === 'PAID').length;
+  const totalMonths = payouts.length;
+  // All payouts in a schedule share the same amount, so it's safe to read
+  // it from the first entry rather than hardcoding it.
+  const monthlyAmount = payouts[0]?.amount || 0;
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
         <div>
           <h3 className="font-bold text-gray-900 text-sm">Your Monthly Payout Schedule</h3>
-          <p className="text-xs text-gray-400 mt-0.5">₹10,000/month for 12 months, as a State Organizer.</p>
+          <p className="text-xs text-gray-400 mt-0.5">
+            ₹{monthlyAmount.toLocaleString('en-IN')}/month for {totalMonths} months, as a State Organizer.
+          </p>
         </div>
         <span className="text-xs font-semibold text-gray-500 bg-gray-100 rounded-full px-3 py-1 w-fit">
-          {paidCount}/12 months paid
+          {paidCount}/{totalMonths} months paid
         </span>
       </div>
 

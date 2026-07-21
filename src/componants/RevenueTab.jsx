@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { getRevenueOverview } from '../api/revenue.js';
 import { downloadInvoicePDF } from '../utils/invoiceGenerator.js';
 import NetworkSearchFilter from './NetworkSearchFilterRevenue.jsx';
+import api from '../api/axios.js';
 
 function formatDate(iso) {
   const d = new Date(iso);
@@ -20,6 +21,7 @@ export default function RevenueTab() {
   const [downloadingId, setDownloadingId] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [pricePerBook, setPricePerBook] = useState(60); // fallback default until settings load
 
   const load = async () => {
     setLoading(true);
@@ -36,20 +38,26 @@ export default function RevenueTab() {
     }
   };
 
-  useEffect(() => {
-    load();
-  }, []);
+useEffect(() => {
+  load();
+}, []);
 
-  const handleDownload = async (transaction) => {
-    setDownloadingId(transaction._id);
-    try {
-      await downloadInvoicePDF(transaction);
-    } catch (err) {
-      console.error('Invoice generation failed:', err);
-    } finally {
-      setDownloadingId(null);
-    }
-  };
+useEffect(() => {
+  api.get('/settings')
+    .then((res) => setPricePerBook(res.data.settings.pricePerBook))
+    .catch(() => {}); // non-critical -- keeps default fallback of 60 if this fails
+}, []);
+
+const handleDownload = async (transaction) => {
+  setDownloadingId(transaction._id);
+  try {
+    await downloadInvoicePDF(transaction, pricePerBook);
+  } catch (err) {
+    console.error('Invoice generation failed:', err);
+  } finally {
+    setDownloadingId(null);
+  }
+};
 
   // Filters by name/email/mobile/Reg No only.
   const filteredTransactions = useMemo(() => {
