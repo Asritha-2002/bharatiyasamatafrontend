@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { INDIAN_STATES } from '../utils/indianStates';
 
 export default function Register() {
   const [searchParams] = useSearchParams();
@@ -13,6 +14,9 @@ export default function Register() {
     contactNumber: '',
     password: '',
     referralCode: refFromUrl,
+    state: '',
+    city: '',
+    houseNumber: '',
   });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -29,15 +33,11 @@ export default function Register() {
     setError('');
     setSubmitting(true);
     try {
-      // When there's no ref code in the URL, we deliberately don't send a
-      // referralCode field at all -- the backend treats a missing code as
-      // "register under the main admin" and fills in that referredBy itself.
-      // Keeping that decision server-side means it can't be spoofed by
-      // editing form state or the request body in devtools.
-      const { name, email, contactNumber, password, referralCode } = form;
+      const { name, email, contactNumber, password, referralCode, state, city, houseNumber } = form;
       const payload = hasReferral
-        ? { name, email, contactNumber, password, referralCode }
-        : { name, email, contactNumber, password };
+        ? { name, email, contactNumber, password, referralCode, state, city, houseNumber }
+        : { name, email, contactNumber, password, state, city, houseNumber };
+      console.log(form)
 
       await register(payload);
       navigate('/welcome');
@@ -49,7 +49,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-10">
       <div className="w-full max-w-md bg-white rounded-xl shadow-sm border border-gray-200 p-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Join Bharatiya Samata</h1>
         <p className="text-sm text-gray-500 mb-6">
@@ -66,7 +66,9 @@ export default function Register() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Full Name <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
               name="name"
@@ -78,7 +80,9 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email <span className="text-red-500">*</span>
+            </label>
             <input
               type="email"
               name="email"
@@ -90,7 +94,9 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Contact Number <span className="text-red-500">*</span>
+            </label>
             <input
               type="tel"
               name="contactNumber"
@@ -102,7 +108,9 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password <span className="text-red-500">*</span>
+            </label>
             <input
               type="password"
               name="password"
@@ -114,10 +122,51 @@ export default function Register() {
             />
           </div>
 
-          {/* Referral Code only appears when the invite link actually carried
-              one. With no ?ref= in the URL, this field is omitted entirely --
-              not shown disabled, not shown pre-filled -- so there's nothing
-              here for the person to second-guess or try to edit. */}
+          {/* ---- Address section ---- */}
+          <div className="">
+                       <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                State <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="state"
+                value={form.state}
+                onChange={handleChange}
+                required
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+              >
+                <option value="" disabled>Select your state</option>
+                {INDIAN_STATES.map((s) => (
+                  <option key={s.code} value={s.name}>{s.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+              <input
+                type="text"
+                name="city"
+                value={form.city}
+                onChange={handleChange}
+                placeholder="e.g. Vijayawada"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">House Number</label>
+              <input
+                type="text"
+                name="houseNumber"
+                value={form.houseNumber}
+                onChange={handleChange}
+                placeholder="e.g. 12-34-56"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+              />
+            </div>
+          </div>
+
           {hasReferral && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Recruitment Code</label>

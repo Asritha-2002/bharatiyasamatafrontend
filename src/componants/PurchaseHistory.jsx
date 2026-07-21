@@ -61,7 +61,7 @@ const downloadInvoice = async (purchase) => {
     const dateStr = new Date(purchase.createdAt).toLocaleDateString('en-IN', {
       day: '2-digit', month: 'short', year: 'numeric'
     });
-    const logoUrl = `${window.location.origin}/logo2.webp`; // adjust filename/extension to match what's actually in your public folder
+    const logoUrl = `${window.location.origin}/image.png`; // adjust filename/extension to match what's actually in your public folder
 
     invoiceEl.innerHTML = `
       <!-- Header -->
