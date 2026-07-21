@@ -59,7 +59,7 @@ export default function Header() {
             rel="noopener noreferrer"
             className="text-sm font-semibold text-[#344256] hover:text-accent transition-colors"
           >
-            Donate
+            Help Needy
           </a>
           <Link to='/view-blogs'
           className="text-sm font-semibold text-[#344256] hover:text-accent transition-colors"
@@ -121,7 +121,7 @@ export default function Header() {
               rel="noopener noreferrer"
               className="text-lg font-semibold text-primary hover:text-accent"
             >
-              Donate
+              Help Needy
             </a>
             <Link
               to="/view-blogs"

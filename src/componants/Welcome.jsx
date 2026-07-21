@@ -27,7 +27,7 @@ export default function Welcome() {
             <p>
               Generosity is always two fold rewarded. Conferring education to the poor is said to be the greatest
               Generosity. We request and seek your permission to share the FREE Hindi Books distribution as an aid for
-              donation to the poor students of various schools. This donation will be used to donate academic Hindi
+              donation to the poor students of various schools. This funding will be used to help academic Hindi
               Books for high school poor students.
             </p>
           </div>
