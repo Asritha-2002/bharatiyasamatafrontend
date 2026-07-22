@@ -75,7 +75,7 @@ export default function BookDonation() {
       <div className="max-w-6xl mx-auto px-4">
         <p className="text-[#F4882A] font-heading text-sm font-semibold uppercase tracking-wide">nIP - National integration programme</p>
         <h2 className="font-heading text-2xl md:text-4xl font-bold text-[#344256] mt-2">
-          One Book donation for One year studies
+          One Book help for One year studies
         </h2>
         <div className="w-20 h-0.5 bg-[#F4882A] my-6" />
 

@@ -17,7 +17,7 @@ export default function Header() {
 
   const navLinks = [
     { label: "Home", href: "/" },
-    { label: "Book Donation", href: "#books" },
+    { label: "Help Book", href: "#books" },
     { label: "How Do I Help", href: "#help" },
     { label: "About", href: "#about" },
   ];
