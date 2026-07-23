@@ -55,7 +55,7 @@ export default function Register() {
         <p className="text-sm text-gray-500 mb-6">
           {hasReferral
             ? `Registering with recruitment code: ${refFromUrl}`
-            : "You'll be registered under Bharatiya Samata's main network."}
+            : "You'll be registered under Bharatiya Samata's main Recruits."}
         </p>
 
         {error && (
@@ -74,6 +74,7 @@ export default function Register() {
               name="name"
               value={form.name}
               onChange={handleChange}
+              placeholder='Enter your name'
               required
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
@@ -88,6 +89,7 @@ export default function Register() {
               name="email"
               value={form.email}
               onChange={handleChange}
+              placeholder='Enter your email'
               required
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
@@ -102,6 +104,7 @@ export default function Register() {
               name="contactNumber"
               value={form.contactNumber}
               onChange={handleChange}
+              placeholder='Enter your mobile number'
               required
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
@@ -116,6 +119,7 @@ export default function Register() {
               name="password"
               value={form.password}
               onChange={handleChange}
+              placeholder='Create your password'
               required
               minLength={6}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
@@ -149,6 +153,7 @@ export default function Register() {
                 name="city"
                 value={form.city}
                 onChange={handleChange}
+                placeholder="Enter your city"
                 placeholder="e.g. Vijayawada"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
               />
@@ -161,6 +166,7 @@ export default function Register() {
                 name="houseNumber"
                 value={form.houseNumber}
                 onChange={handleChange}
+                placeholder="Enter your house number"
                 placeholder="e.g. 12-34-56"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
               />

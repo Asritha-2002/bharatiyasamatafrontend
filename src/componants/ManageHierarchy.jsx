@@ -93,7 +93,7 @@ export default function ManageHierarchy() {
       <div className="mb-6">
         <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-1">Hierarchy Lookup</h2>
         <p className="text-xs text-gray-400 mb-4">
-          Enter any member's Registration ID to see their full position in the network — everyone above them and their entire downline.
+          Enter any member's Registration ID to see their full position in the recruit — everyone above them and their entire downline.
         </p>
 
         <div className="flex gap-2">
@@ -152,7 +152,7 @@ export default function ManageHierarchy() {
           {/* ---- Full tree diagram, rooted at the searched member ---- */}
           <div>
             <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3">
-              Network Tree ({result.descendants.length} total below this member)
+              Recruits Tree ({result.descendants.length} total below this member)
             </h3>
 
             <div className="bg-white border border-gray-200 rounded-xl p-8 overflow-x-auto">

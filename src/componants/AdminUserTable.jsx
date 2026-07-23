@@ -193,7 +193,7 @@ export default function AdminUserTable({ users, onUpdated }) {
                       {u.recruitCount > 0 && (
                         <button
                           onClick={() => setDrawerUser(u)}
-                          title="View network tree"
+                          title="View recruits tree"
                           className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-800 flex-shrink-0"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

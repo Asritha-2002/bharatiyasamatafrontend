@@ -13,16 +13,16 @@ import { getRoleLabel } from '../utils/roleLabels.js';
 import { useDashboardData } from '../hooks/useDashboardData.js';
 
 const USER_TABS = [
-  { key: 'network', label: 'My Network' },
+  { key: 'network', label: 'My Recruits' },
   { key: 'purchases', label: 'Books Helped History' }
 ];
 
 const USER_HELP_POINTS = [
-  { title: 'Your Recruitment Code', text: "Share your unique recruitment code or invite link with new people you want to bring into your network." },
-  { title: 'My Network Tab', text: "See your parent (who recruited you) and everyone you've personally recruited, grouped into batches of 12." },
+  { title: 'Your Recruitment Code', text: "Share your unique recruitment code or invite link with new people you want to bring into your recruits." },
+  { title: 'My Recruits Tab', text: "See your parent (who recruited you) and everyone you've personally recruited, grouped into batches of 12." },
   { title: 'Books Helped History Tab', text: 'Check your book helped records and confirm your annual books helped status here.' },
   { title: 'Groups & Batches', text: 'Recruits are automatically organized into groups of 12. A group is marked "Completed" once all 12 members have purchased their books.' },
-  { title: 'Expanding a Recruit', text: "Click on any recruit's row to see their own recruits (your grandkids in the network)." },
+  { title: 'Expanding a Recruit', text: "Click on any recruit's row to see their own recruits (your grandkids in the recruits)." },
   { title: 'Getting Promoted', text: "Your invite link becomes active once you're promoted to RO. Until then, focus on completing your book purchase." }
 ];
 

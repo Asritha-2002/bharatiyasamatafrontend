@@ -18,7 +18,7 @@ import ManageKyc from '../componants/ManageKyc.jsx';
 import ManagePayouts from '../componants/ManagePayouts.jsx';
 import ManageSettings from '../componants/ManageSettings.jsx';
 const SIDEBAR_ITEMS = [
-  { key: 'network', label: 'Network', path: '/admin/network', implemented: true },
+  { key: 'network', label: 'Recruits', path: '/admin/network', implemented: true },
   { key: 'hierarchy', label: 'Hierarchy Lookup', path: '/admin/hierarchy', implemented: true }, // NEW
   { key: 'helped', label: 'Total Helped Books Money', path: '/admin/revenue', implemented: true },
   { key: 'blogs', label: 'Manage Blogs', path: '/admin/blogs', implemented: true },
@@ -33,9 +33,9 @@ const SIDEBAR_ITEMS = [
 
 const ADMIN_HELP_POINTS = [
   { title: 'Recruitment Code', text: 'Share your admin recruitment code to onboard new ROs directly under you.' },
-  { title: 'Network', text: 'View and manage every member across the entire network from one table.' },
+  { title: 'Recruits', text: 'View and manage every member across the entire recruits from one table.' },
   { title: 'Helped', text: 'Track total books sold and helped generated across all members.' },
-  { title: 'Managing Users', text: 'Use the network table to update roles or books helped status for any member.' },
+  { title: 'Managing Users', text: 'Use the recruits table to update roles or books helped status for any member.' },
 ];
 
 // How long a request can run before we tell the person it's slow (ms).

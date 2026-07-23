@@ -16,7 +16,7 @@ import MyPayoutSchedule from '../componants/MyPayoutSchedule.jsx';
 import HelpBooksCard from '../componants/HelpBooksCard.jsx';
 
 const USER_TABS = [
-  { key: 'network', label: 'My Network' },
+  { key: 'network', label: 'My Recruits' },
   { key: 'purchases', label: 'Books Helped History' }
 ];
 
@@ -27,11 +27,11 @@ function buildUserHelpPoints(settings) {
   const payoutMonths = settings?.soPayoutDurationMonths ?? 12;
 
   return [
-    { title: 'Your Recruitment Code', text: "Share your unique recruitment code or invite link with new people you want to bring into your network." },
-    { title: 'My Network Tab', text: "See your parent (who recruited you) and everyone you've personally recruited, grouped into batches of " + batchSize + "." },
+    { title: 'Your Recruitment Code', text: "Share your unique recruitment code or invite link with new people you want to bring into your recruits." },
+    { title: 'My Recruits Tab', text: "See your parent (who recruited you) and everyone you've personally recruited, grouped into batches of " + batchSize + "." },
     { title: 'Books Helped History Tab', text: 'Check your book helped records and confirm your annual books helped status here.' },
     { title: 'Groups & Batches', text: `Recruits are automatically organized into groups of ${batchSize}. A group is marked "Completed" once all ${batchSize} members have helped their books.` },
-    { title: 'Expanding a Recruit', text: "Click on any recruit's row to see their own recruits (your grandkids in the network)." },
+    { title: 'Expanding a Recruit', text: "Click on any recruit's row to see their own recruits (your grandkids in the recruits)." },
     { title: 'Getting Promoted', text: "Your invite link becomes active once you're promoted to RO. Until then, focus on completing your books helping." },
     { title: 'Getting Promoted to SO', text: `You're promoted to State Organizer (SO) as soon as at least ${requiredRoCount} of your recruits ${requiredRoCount === 1 ? 'has' : 'have'} themselves helped 2 books and become ${requiredRoCount === 1 ? 'an RO' : 'ROs'}.` },
     { title: 'SO Monthly Payout & Renewal', text: `As an SO, you'll receive ₹${payoutAmount.toLocaleString('en-IN')} every month for up to ${payoutMonths} month${payoutMonths === 1 ? '' : 's'}. To renew this for another cycle, simply repeat the process: help 2 books to become an RO again, recruit a group of members, and have at least ${requiredRoCount} of them also help 2 books and become ${requiredRoCount === 1 ? 'an RO' : 'ROs'}.` },

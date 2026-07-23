@@ -199,7 +199,7 @@ export default function AdminNetworkExplorer({ everyone, adminUser }) {
               onClick={clearFilter}
               className="text-xs font-semibold text-orange-600 hover:text-orange-800"
             >
-              ← Back to network tree
+              ← Back to recruits tree
             </button>
           </div>
 
@@ -232,10 +232,12 @@ export default function AdminNetworkExplorer({ everyone, adminUser }) {
                               <div className="flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-full bg-orange-100 text-orange-700 text-xs font-bold flex items-center justify-center flex-shrink-0">
                                   {getInitials(member.name)}
+                                  
                                 </div>
                                 <div className="min-w-0">
                                   <p className="font-medium text-gray-900 whitespace-nowrap">{member.name}</p>
                                   <p className="text-xs text-gray-400 break-all">{member.email}</p>
+                                  <p className="text-xs text-gray-400 break-all">{member.contactNumber}</p>
                                 </div>
                               </div>
                             </td>
@@ -319,13 +321,14 @@ export default function AdminNetworkExplorer({ everyone, adminUser }) {
           <div className="relative mb-5">
             <input
               type="text"
-              placeholder="Search a member to jump to their spot in the network..."
+              placeholder="Search a member to jump to their spot in the recruits..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full sm:w-96 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
             {searchResults.length > 0 && (
               <div className="absolute z-10 mt-1 w-full sm:w-96 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                
                 {searchResults.map((u) => (
                   <button
                     key={u._id}
@@ -335,6 +338,7 @@ export default function AdminNetworkExplorer({ everyone, adminUser }) {
                     <div className="w-7 h-7 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0">
                       {getInitials(u.name)}
                     </div>
+                    
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-gray-900 truncate">{u.name}</p>
                       <p className="text-xs text-gray-400 truncate">{u.email}</p>

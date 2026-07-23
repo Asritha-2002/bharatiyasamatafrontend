@@ -40,7 +40,7 @@ export default function GroupTreeDrawer({ open, onClose, rootUser, allUsers }) {
       >
         <div className="sticky top-0 bg-white border-b border-gray-200 px-5 py-4 flex items-center justify-between z-10">
           <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Network Tree</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Recruits Tree</p>
             <p className="font-bold text-gray-900">{rootUser?.name}</p>
           </div>
           <button
