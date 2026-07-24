@@ -35,6 +35,9 @@ import TermsAndConditions from './pages/TermsAndConditions';
 import RefundPolicy from './pages/RefundPolicy';
 import CancellationPolicy from './pages/CancellationPolicy';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import HowToHelp from './componants/HowToHelp.jsx';
+import UserDownloads from "./pages/UserDownloads.jsx"
+import UserAppointments from "./pages/UserAppointments.jsx"
 
 
 
@@ -48,7 +51,6 @@ function HomePage() {
         <LocationBar />
         <WelcomeSection />
         <BookDonation />
-        <HowDoIHelp />
         <TheyNeedHelp/>
         <About />
         <HelpTogether />
@@ -75,6 +77,9 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/kyc" element={<Kyc />} />
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+          <Route path="/appointments" element={<UserAppointments />} />
+<Route path="/download" element={<UserDownloads />} />                    
+<Route path="/how-do-i-help" element={<HowToHelp />} />
 <Route path="/refund-policy" element={<RefundPolicy />} />
 <Route path="/cancellation-policy" element={<CancellationPolicy />} />
 <Route path="/privacy-policy" element={<PrivacyPolicy />} />

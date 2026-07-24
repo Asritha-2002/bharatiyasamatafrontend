@@ -123,6 +123,9 @@ export default function ManageBanner() {
 
   return (
     <div className="space-y-6">
+      <p class="text-gray-600 text-sm pb-2">
+  Image Dimensions should be: <strong>915 × 280 pixels</strong> 
+</p>
       {/* Current banner */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">Current Banner</p>

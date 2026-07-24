@@ -17,11 +17,18 @@ import ManageHierarchy from '../componants/ManageHierarchy.jsx';
 import ManageKyc from '../componants/ManageKyc.jsx';
 import ManagePayouts from '../componants/ManagePayouts.jsx';
 import ManageSettings from '../componants/ManageSettings.jsx';
+import ManageAppointments from '../componants/ManageAppointments.jsx';
+import ManageDownloads from '../componants/ManageDownloads.jsx';
+import ManageHowDoIHelp from '../componants/ManageHowDoIHelp.jsx';
+import HowDoIHelp from '../componants/HowDoIHelp.jsx';
 const SIDEBAR_ITEMS = [
   { key: 'network', label: 'Recruits', path: '/admin/network', implemented: true },
   { key: 'hierarchy', label: 'Hierarchy Lookup', path: '/admin/hierarchy', implemented: true }, // NEW
   { key: 'helped', label: 'Total Helped Books Money', path: '/admin/revenue', implemented: true },
   { key: 'blogs', label: 'Manage Blogs', path: '/admin/blogs', implemented: true },
+  { key: 'appointments', label: 'Manage Appointments', path: '/admin/appointments', implemented: true },
+  { key: 'downloads', label: 'Manage Downloads', path: '/admin/downloads', implemented: true },
+  { key: 'help', label: 'Help', path: '/admin/help', implemented: true },
   { key: 'banner', label: 'Manage Banner Image', path: '/admin/banner', implemented: true },
   { key: 'gallery', label: 'Manage Gallery', path: '/admin/gallery', implemented: true },
   { key: 'contact', label: 'Contact History', path: '/admin/contact', implemented: true },
@@ -46,6 +53,9 @@ function resolveActiveKey(pathname) {
   if (path.includes('revenue')) return 'helped';
   if (path.includes('hierarchy')) return 'hierarchy';
   if (path.includes('blog')) return 'blogs';
+  if (path.includes('appointments')) return 'appointments';
+  if (path.includes('download')) return 'downloads';
+  if (path.includes('help')) return 'help';
   if (path.includes('banner')) return 'banner';
   if (path.includes('gallery')) return 'gallery';
   if (path.includes('kyc')) return 'kyc';
@@ -236,6 +246,9 @@ export default function AdminDashboard() {
 
                 {activeKey === 'helped' && <RevenueTab />}
                 {activeKey === 'blogs' && <ManageBlogs />}
+                {activeKey === 'appointments' && <ManageAppointments />}
+                {activeKey === 'downloads' && <ManageDownloads />}
+                {activeKey === 'help' && <ManageHowDoIHelp />}
                 {activeKey === 'banner' && <ManageBanner />}
                 {activeKey === 'gallery' && <ManageGallery />}
                 {activeKey === 'contact' && <ManageContact />}

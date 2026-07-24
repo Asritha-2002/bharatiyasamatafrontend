@@ -1,26 +1,24 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { getBlogs } from '../api/blogs.js';
+import { useNavigate } from 'react-router-dom';
+import { getDownloads } from '../api/downloads.js';
 
-export default function Blogs() {
+export default function Downloads() {
   const navigate = useNavigate();
 
-  const [blogs, setBlogs] = useState([]);
+  const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
-  const currentYear = new Date().getFullYear();
-  const programmeYear = `${currentYear}`;
 
-  const fetchBlogs = useCallback(() => {
+  const fetchEntries = useCallback(() => {
     setLoading(true);
     setLoadError('');
 
-    getBlogs()
+    getDownloads()
       .then((res) => {
-        setBlogs(res.data.blogs || []);
+        setEntries(res.data.downloads || []);
       })
       .catch(() => {
-        setLoadError("Couldn't load the blog posts. Please try again.");
+        setLoadError("Couldn't load the downloads. Please try again.");
       })
       .finally(() => {
         setLoading(false);
@@ -28,8 +26,8 @@ export default function Blogs() {
   }, []);
 
   useEffect(() => {
-    fetchBlogs();
-  }, [fetchBlogs]);
+    fetchEntries();
+  }, [fetchEntries]);
 
   return (
     <div className="min-h-screen bg-[#F5F5F5]">
@@ -50,9 +48,9 @@ export default function Blogs() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-10">
-        <p className="text-[#F4882A] font-heading text-sm font-semibold uppercase tracking-wide">Our Blogs</p>
+        <p className="text-[#F4882A] font-heading text-sm font-semibold uppercase tracking-wide">Resources</p>
         <h1 className="font-heading text-2xl md:text-4xl font-bold text-[#344256] mt-2">
-          National Integration Programme - {programmeYear}
+          Downloads
         </h1>
         <div className="w-20 h-0.5 bg-[#F4882A] my-6" />
 
@@ -61,7 +59,7 @@ export default function Blogs() {
             <span>{loadError}</span>
             <button
               type="button"
-              onClick={fetchBlogs}
+              onClick={fetchEntries}
               className="text-xs font-semibold uppercase tracking-wide text-red-700 hover:text-red-900 shrink-0"
             >
               Retry
@@ -70,32 +68,44 @@ export default function Blogs() {
         ) : loading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rounded overflow-hidden shadow-sm">
-                <div className="w-full h-52 bg-gray-200 animate-pulse" />
-                <div className="p-5 space-y-2">
+              <div key={i} className="rounded overflow-hidden shadow-sm bg-white">
+                <div className="p-5 space-y-3">
                   <div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" />
                   <div className="h-3 w-full bg-gray-100 rounded animate-pulse" />
                   <div className="h-3 w-5/6 bg-gray-100 rounded animate-pulse" />
+                  <div className="h-3 w-1/3 bg-gray-100 rounded animate-pulse" />
                 </div>
               </div>
             ))}
           </div>
-        ) : blogs.length === 0 ? (
-          <p className="text-sm text-gray-500">No blog posts have been added yet.</p>
+        ) : entries.length === 0 ? (
+          <p className="text-sm text-gray-500">No downloads have been added yet.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {blogs.map((blog) => (
-              <Link
-                key={blog._id}
-                to={`/blogs/${blog.sku}`}
-                className="block bg-white rounded shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+            {entries.map((entry) => (
+              <div
+                key={entry._id}
+                className="bg-white rounded shadow-sm overflow-hidden hover:shadow-md transition-shadow p-5"
               >
-                <img src={blog.imageUrl} alt={blog.title} className="w-full h-52 object-cover" />
-                <div className="p-5">
-                  <h3 className="font-heading text-lg font-bold text-[#344256]">{blog.title}</h3>
-                  <p className="text-sm text-gray-600 mt-2 line-clamp-3">{blog.description}</p>
+                <h3 className="font-heading text-lg font-bold text-[#344256]">{entry.title}</h3>
+                <p className="text-sm text-gray-600 mt-2 line-clamp-3">{entry.description}</p>
+
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <a
+                    href={entry.pdfUrl}
+                    download={`${entry.title}.pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#F4882A] hover:text-[#d9701c]"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 3v12m0 0-4-4m4 4 4-4" />
+                      <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+                    </svg>
+                    Download PDF
+                  </a>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         )}

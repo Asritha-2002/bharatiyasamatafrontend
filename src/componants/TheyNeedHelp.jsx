@@ -2,7 +2,7 @@
 
 export default function TheyNeedHelp() {
   return (
-    <section id="donate" className="py-16 bg-[#F5F5F5]">
+    <section id="donate" className="py-16 bg-[#FFFFFF]">
       <div className="max-w-4xl mx-auto px-4 text-center">
         <h2 className="font-heading text-2xl md:text-4xl font-bold text-[#344256]">
           They Need Our Help

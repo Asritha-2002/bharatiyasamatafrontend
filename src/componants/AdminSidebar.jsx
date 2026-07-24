@@ -18,6 +18,25 @@ const ICONS = {
       <path d="M14 4v5h5M8 13h8M8 17h5" />
     </svg>
   ),
+  appointments: (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+    <rect x="4" y="5" width="16" height="15" rx="2" />
+    <path d="M4 10h16M8 3v4M16 3v4" />
+    <path d="M9 14l1.5 1.5L14 12" />
+  </svg>
+),
+downloads: (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+    <path d="M12 3v12m0 0-4-4m4 4 4-4" />
+    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+  </svg>
+),
+help: (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+    <path d="M12 8.5c-1.2-1.8-3.6-1.8-4.8 0-1 1.6 0 3.4 1.6 4.6L12 15.5l3.2-2.4c1.6-1.2 2.6-3 1.6-4.6-1.2-1.8-3.6-1.8-4.8 0Z" />
+    <path d="M4 17.5c1.8 1.7 4.2 2.5 8 2.5s6.2-.8 8-2.5" />
+  </svg>
+),
   banner: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
       <rect x="3" y="5" width="18" height="14" rx="2" />
