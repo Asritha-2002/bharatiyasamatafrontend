@@ -15,7 +15,6 @@ import Banner from './componants/Banner.jsx';
 import LocationBar from './componants/LocationBar.jsx';
 import WelcomeSection from './componants/Welcome.jsx';
 import BookDonation from './componants/BookDonation.jsx';
-import HowDoIHelp from './componants/HowDoIHelp.jsx';
 import About from './componants/About.jsx';
 import HelpTogether from './componants/HelpTogether.jsx';
 import TheyNeedHelp from './componants/TheyNeedHelp.jsx';
